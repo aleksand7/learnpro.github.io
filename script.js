@@ -256,10 +256,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
     
-  // САМАЯ ПРОСТАЯ ПРОВЕРКА EMAIL
-function isValidEmail(email) {
-    return email.includes('@') && email.includes('.');
-}
+function isValidEmail(email) { return true; } // Временно отключаем проверку
     
     // Показываем загрузку
     submitBtn.disabled = true;
@@ -414,6 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
 
 
 
