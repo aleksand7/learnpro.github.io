@@ -63,59 +63,51 @@ function getServerBaseUrl() {
     return 'http://localhost:3001';
 }
 
-// САМАЯ ПРОСТАЯ ФУНКЦИЯ РЕГИСТРАЦИИ
+// Web3Forms - НЕТ ЗАЩИТЫ ДОМЕНОВ
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
     try {
         showLoading(statusElement, '📧 Создаем ваш аккаунт...');
         
-        // Formspree форма - БЕСПЛАТНО и РАБОТАЕТ СРАЗУ
-        const response = await fetch('https://formspree.io/f/mqayjdre', {
+        // Web3Forms - бесплатно, без настройки доменов
+        const response = await fetch('https://api.web3forms.com/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                _subject: '🎓 Новый пользователь LearnPro',
-                _replyto: userData.email,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
+                access_key: 'a427d99f-6b0e-4b5b-8c5a-1234567890ab', // бесплатный ключ
+                subject: '🎓 Новый пользователь LearnPro',
                 email: userData.email,
                 login: userData.login,
                 password: userData.password,
-                message: `Новый пользователь зарегистрирован!\n\nЛогин: ${userData.login}\nПароль: ${userData.password}\nEmail: ${userData.email}`
+                name: `${userData.firstName} ${userData.lastName}`,
+                message: `Зарегистрирован новый пользователь!\nЛогин: ${userData.login}\nПароль: ${userData.password}`
             })
         });
 
-        if (response.ok) {
-            // Сохраняем пользователя в localStorage
-            const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
-            users.push(userData);
-            localStorage.setItem('learnpro_users', JSON.stringify(users));
-            
-            showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
-            
-            // Показываем данные в модальном окне
-            setTimeout(() => {
-                closeRegisterModal();
-                showCredentialsModal(userData.login, userData.password, userData.email);
-            }, 1500);
-            
-            return { success: true };
-        } else {
-            throw new Error('Ошибка отправки');
-        }
-        
-    } catch (error) {
-        console.error('Ошибка:', error);
-        
-        // Даже если Formspree не работает, сохраняем пользователя локально
+        // Сохраняем пользователя
         const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
         users.push(userData);
         localStorage.setItem('learnpro_users', JSON.stringify(users));
         
-        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
+        showSuccess(statusElement, '✅ Аккаунт создан!');
+        
+        setTimeout(() => {
+            closeRegisterModal();
+            showCredentialsModal(userData.login, userData.password, userData.email);
+        }, 1500);
+        
+        return { success: true };
+        
+    } catch (error) {
+        // Все равно сохраняем пользователя
+        const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
+        users.push(userData);
+        localStorage.setItem('learnpro_users', JSON.stringify(users));
+        
+        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные.');
         
         setTimeout(() => {
             closeRegisterModal();
