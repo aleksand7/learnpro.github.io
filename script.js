@@ -256,10 +256,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
     
-   //  if (!isValidEmail(email)) {
-     //   showError(statusElement, '❌ Введите корректный email');
-       // return;
-   // }
+  // САМАЯ ПРОСТАЯ ПРОВЕРКА EMAIL
+function isValidEmail(email) {
+    return email.includes('@') && email.includes('.');
+}
     
     // Показываем загрузку
     submitBtn.disabled = true;
@@ -414,5 +414,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
 
 
