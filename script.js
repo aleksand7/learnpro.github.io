@@ -77,7 +77,7 @@ async function sendCredentialsEmail(userData) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                access_key: 'a427d99f-6b0e-4b5b-8c5a-8c9f8c7d6e5f', // тестовый ключ
+                access_key: '90895255-4ba2-4a2d-b298-5759e6ddc327', // тестовый ключ
                 subject: '🎓 Новый пользователь LearnPro',
                 from_name: 'LearnPro Platform',
                 email: userData.email,
