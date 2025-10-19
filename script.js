@@ -208,10 +208,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
     
-    if (!isValidEmail(email)) {
-        showError(statusElement, '❌ Введите корректный email');
-        return;
-    }
+    // ДОБАВЬТЕ ЭТУ ФУНКЦИЮ В НАЧАЛО script.js
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
     
     // Показываем загрузку
     submitBtn.disabled = true;
@@ -364,4 +364,5 @@ document.addEventListener('DOMContentLoaded', function() {
             showRegisterModal();
         });
     }
+
 });
