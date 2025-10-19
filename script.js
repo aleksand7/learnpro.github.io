@@ -6,21 +6,14 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Функции для работы с пользователями
-function getUsers() {
-    return JSON.parse(localStorage.getItem('learnpro_users')) || [];
-}
-
-function saveUsers(users) {
-    localStorage.setItem('learnpro_users', JSON.stringify(users));
-}
-
+// Функция генерации логина
 function generateLogin(firstName, lastName) {
     const namePart = firstName.toLowerCase().slice(0, 3);
     const randomNum = Math.floor(Math.random() * 1000);
     return `${namePart}${lastName.toLowerCase().slice(0, 2)}${randomNum}`;
 }
 
+// Функция генерации пароля
 function generatePassword() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let password = '';
@@ -28,6 +21,15 @@ function generatePassword() {
         password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return password;
+}
+
+// Функции для работы с пользователями
+function getUsers() {
+    return JSON.parse(localStorage.getItem('learnpro_users')) || [];
+}
+
+function saveUsers(users) {
+    localStorage.setItem('learnpro_users', JSON.stringify(users));
 }
 
 // Функции показа статусов
@@ -44,6 +46,11 @@ function showSuccess(element, message) {
 function showLoading(element, message) {
     element.className = 'status-message status-loading';
     element.innerHTML = message;
+}
+
+// ДОБАВЬТЕ ЭТУ ФУНКЦИЮ ПЕРВОЙ СТРОКОЙ В script.js
+function isValidEmail(email) {
+    return email.includes('@') && email.includes('.');
 }
 
 // Автоматическое определение URL сервера
@@ -64,7 +71,7 @@ async function sendCredentialsEmail(userData) {
         showLoading(statusElement, '📧 Создаем ваш аккаунт...');
         
         // Formspree форма - БЕСПЛАТНО и РАБОТАЕТ СРАЗУ
-        const response = await fetch('https://formspree.io/f/mknaqkjq', {
+        const response = await fetch('https://formspree.io/f/mqayjdre', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -256,7 +263,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
     
-function isValidEmail(email) { return true; } // Временно отключаем проверку
+    if (!isValidEmail(email)) {
+        showError(statusElement, '❌ Введите корректный email');
+        return;
+    }
     
     // Показываем загрузку
     submitBtn.disabled = true;
@@ -409,9 +419,4 @@ document.addEventListener('DOMContentLoaded', function() {
             showRegisterModal();
         });
     }
-
 });
-
-
-
-
