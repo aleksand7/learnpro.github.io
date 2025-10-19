@@ -1,3 +1,51 @@
+// ===== ДОБАВЬТЕ ЭТОТ КОД В НАЧАЛО script.js =====
+
+// Функция проверки email
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Функции для работы с пользователями
+function getUsers() {
+    return JSON.parse(localStorage.getItem('learnpro_users')) || [];
+}
+
+function saveUsers(users) {
+    localStorage.setItem('learnpro_users', JSON.stringify(users));
+}
+
+function generateLogin(firstName, lastName) {
+    const namePart = firstName.toLowerCase().slice(0, 3);
+    const randomNum = Math.floor(Math.random() * 1000);
+    return `${namePart}${lastName.toLowerCase().slice(0, 2)}${randomNum}`;
+}
+
+function generatePassword() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let password = '';
+    for (let i = 0; i < 10; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+}
+
+// Функции показа статусов
+function showError(element, message) {
+    element.className = 'status-message status-error';
+    element.innerHTML = message;
+}
+
+function showSuccess(element, message) {
+    element.className = 'status-message status-success';
+    element.innerHTML = message;
+}
+
+function showLoading(element, message) {
+    element.className = 'status-message status-loading';
+    element.innerHTML = message;
+}
+
 // Автоматическое определение URL сервера
 function getServerBaseUrl() {
     // Если на хостинге, используем тот же домен
@@ -208,10 +256,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
     
-     if (!isValidEmail(email)) {
-        showError(statusElement, '❌ Введите корректный email');
-        return;
-    }
+   //  if (!isValidEmail(email)) {
+     //   showError(statusElement, '❌ Введите корректный email');
+       // return;
+   // }
     
     // Показываем загрузку
     submitBtn.disabled = true;
@@ -366,4 +414,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
 
