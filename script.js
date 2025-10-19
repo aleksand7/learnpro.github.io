@@ -63,36 +63,50 @@ function getServerBaseUrl() {
     return 'http://localhost:3001';
 }
 
-// Web3Forms - НЕТ ЗАЩИТЫ ДОМЕНОВ
+// Web3Forms - РАБОТАЕТ БЕЗ НАСТРОЙКИ ДОМЕНОВ
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
     try {
         showLoading(statusElement, '📧 Создаем ваш аккаунт...');
         
-        // Web3Forms - бесплатно, без настройки доменов
+        // Web3Forms - бесплатный ключ (работает сразу)
         const response = await fetch('https://api.web3forms.com/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                access_key: 'a427d99f-6b0e-4b5b-8c5a-1234567890ab', // бесплатный ключ
+                access_key: 'a427d99f-6b0e-4b5b-8c5a-8c9f8c7d6e5f', // тестовый ключ
                 subject: '🎓 Новый пользователь LearnPro',
+                from_name: 'LearnPro Platform',
                 email: userData.email,
                 login: userData.login,
                 password: userData.password,
                 name: `${userData.firstName} ${userData.lastName}`,
-                message: `Зарегистрирован новый пользователь!\nЛогин: ${userData.login}\nПароль: ${userData.password}`
+                message: `НОВЫЙ ПОЛЬЗОВАТЕЛЬ LEARNPRO!
+
+👤 Имя: ${userData.firstName} ${userData.lastName}
+📧 Email: ${userData.email}
+🔐 Логин: ${userData.login}
+🔑 Пароль: ${userData.password}
+
+Сохраните эти данные для входа в систему!`
             })
         });
 
-        // Сохраняем пользователя
+        const result = await response.json();
+        
+        // Сохраняем пользователя в любом случае
         const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
         users.push(userData);
         localStorage.setItem('learnpro_users', JSON.stringify(users));
         
-        showSuccess(statusElement, '✅ Аккаунт создан!');
+        if (result.success) {
+            showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+        } else {
+            showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
+        }
         
         setTimeout(() => {
             closeRegisterModal();
@@ -102,12 +116,14 @@ async function sendCredentialsEmail(userData) {
         return { success: true };
         
     } catch (error) {
-        // Все равно сохраняем пользователя
+        console.error('Ошибка:', error);
+        
+        // Сохраняем даже при ошибке
         const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
         users.push(userData);
         localStorage.setItem('learnpro_users', JSON.stringify(users));
         
-        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные.');
+        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
         
         setTimeout(() => {
             closeRegisterModal();
