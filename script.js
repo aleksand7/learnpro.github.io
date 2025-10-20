@@ -1,4 +1,4 @@
-// ===== ДОБАВЬТЕ ЭТОТ КОД В НАЧАЛО script.js =====
+// ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
 // Функция проверки email
 function isValidEmail(email) {
@@ -48,108 +48,62 @@ function showLoading(element, message) {
     element.innerHTML = message;
 }
 
-// ДОБАВЬТЕ ЭТУ ФУНКЦИЮ ПЕРВОЙ СТРОКОЙ В script.js
-function isValidEmail(email) {
-    return email.includes('@') && email.includes('.');
-}
+// ==================== ФУНКЦИЯ ОТПРАВКИ EMAIL ====================
 
-// Автоматическое определение URL сервера
-function getServerBaseUrl() {
-    // Если на хостинге, используем тот же домен
-    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        return window.location.origin;
-    }
-    // Для локальной разработки
-    return 'http://localhost:3001';
-}
-
-// EmailJS - САМЫЙ ПРОСТОЙ СПОСОБ
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
+    // Сохраняем пользователя
+    const users = getUsers();
+    
+    // Проверяем, нет ли уже пользователя с таким email
+    if (users.find(u => u.email === userData.email)) {
+        showError(statusElement, '❌ Пользователь с таким email уже существует');
+        return { success: false };
+    }
+    
+    users.push(userData);
+    saveUsers(users);
+    
+    // Пытаемся отправить email через Formspree (рабочий ID)
     try {
-        showLoading(statusElement, '📧 Создаем ваш аккаунт...');
-        
-        // EmailJS - бесплатно, не требует настройки доменов
-        const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        const response = await fetch('https://formspree.io/f/mknaqkjq', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                service_id: 'service_1rac9ks', // бесплатный сервис
-                template_id: 'template_e1ic32i', // шаблон
-                user_id: 'cBK4HFIwRypWSIcOq', // публичный ключ
-                template_params: {
-                    'user_email': userData.email,
-                    'user_name': `${userData.firstName} ${userData.lastName}`,
-                    'user_login': userData.login,
-                    'user_password': userData.password,
-                    'to_email': userData.email
-                }
+                _subject: '🎓 Новый пользователь LearnPro',
+                _replyto: userData.email,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                login: userData.login,
+                password: userData.password,
+                message: `НОВЫЙ ПОЛЬЗОВАТЕЛЬ LEARNPRO!\n\nИмя: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nЛогин: ${userData.login}\nПароль: ${userData.password}`
             })
         });
 
-        // Сохраняем пользователя в любом случае
-        const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
-        users.push(userData);
-        localStorage.setItem('learnpro_users', JSON.stringify(users));
-        
         if (response.ok) {
             showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
         } else {
             showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
         }
         
-        setTimeout(() => {
-            closeRegisterModal();
-            showCredentialsModal(userData.login, userData.password, userData.email);
-        }, 1500);
-        
-        return { success: true };
-        
     } catch (error) {
-        // Все равно сохраняем пользователя
-        const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
-        users.push(userData);
-        localStorage.setItem('learnpro_users', JSON.stringify(users));
-        
         showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
-        
-        setTimeout(() => {
-            closeRegisterModal();
-            showCredentialsModal(userData.login, userData.password, userData.email);
-        }, 1500);
-        
-        return { success: true };
     }
-}
-// Функции для работы с пользователями (должны быть в script.js)
-function getUsers() {
-    return JSON.parse(localStorage.getItem('learnpro_users')) || [];
-}
-
-function saveUsers(users) {
-    localStorage.setItem('learnpro_users', JSON.stringify(users));
-}
-
-// Функции управления модальными окнами (должны быть в script.js)
-function disableBodyScroll() {
-    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        closeRegisterModal();
+        showCredentialsModal(userData.login, userData.password, userData.email);
+    }, 1500);
+    
+    return { success: true };
 }
 
-function enableBodyScroll() {
-    document.body.style.overflow = '';
-}
+// ==================== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ====================
 
-function closeAllModals() {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        modal.style.display = 'none';
-    });
-    enableBodyScroll();
-}
-// Управление модальными окнами
 let isModalOpen = false;
 
 function disableBodyScroll() {
@@ -201,7 +155,7 @@ function closeLoginModal() {
     enableBodyScroll();
 }
 
-function showCredentialsModal(login, password, email, emailResult) {
+function showCredentialsModal(login, password, email) {
     closeAllModals();
     disableBodyScroll();
     
@@ -229,21 +183,7 @@ function closeAllModals() {
     enableBodyScroll();
 }
 
-// Вспомогательные функции
-function showError(element, message) {
-    element.className = 'status-message status-error';
-    element.innerHTML = message;
-}
-
-function showSuccess(element, message) {
-    element.className = 'status-message status-success';
-    element.innerHTML = message;
-}
-
-function showLoading(element, message) {
-    element.className = 'status-message status-loading';
-    element.innerHTML = message;
-}
+// ==================== ОБРАБОТЧИКИ ФОРМ ====================
 
 // Обработка формы регистрации
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
@@ -284,34 +224,15 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             login,
             password,
             registeredAt: new Date().toISOString(),
-            courses: ['fullstack', 'mobile'], // Добавляем тестовые курсы
-            emailSent: false
+            courses: []
         };
         
         // Сохраняем пользователя
-        const users = getUsers();
+        const result = await sendCredentialsEmail(userData);
         
-        // Проверяем, нет ли уже пользователя с таким email
-        if (users.find(u => u.email === email)) {
-            showError(statusElement, '❌ Пользователь с таким email уже существует');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Создать аккаунт';
-            return;
+        if (!result.success) {
+            showError(statusElement, '❌ Ошибка при создании аккаунта');
         }
-        
-        users.push(userData);
-        saveUsers(users);
-        
-        // "Отправляем" email
-        const emailResult = await sendCredentialsEmail(userData);
-        
-        showSuccess(statusElement, '✅ Аккаунт создан! Открываем данные для входа...');
-        
-        // Показываем модальное окно с данными
-        setTimeout(() => {
-            closeRegisterModal();
-            showCredentialsModal(login, password, email, emailResult);
-        }, 1500);
         
     } catch (error) {
         console.error('Ошибка регистрации:', error);
@@ -334,6 +255,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     // Показываем загрузку
     submitBtn.disabled = true;
     submitBtn.textContent = 'Вход...';
+    showLoading(statusElement, '⏳ Проверяем данные...');
     
     const users = getUsers();
     const user = users.find(u => u.email === email && u.password === password);
@@ -356,7 +278,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     }
 });
 
-// Обработчики закрытия модальных окон
+// ==================== ОБРАБОТЧИКИ ЗАКРЫТИЯ МОДАЛЬНЫХ ОКОН ====================
+
 document.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal')) {
         closeAllModals();
@@ -374,6 +297,8 @@ document.querySelectorAll('.modal-content').forEach(modalContent => {
         event.stopPropagation();
     });
 });
+
+// ==================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ====================
 
 // Плавный скролл для навигации
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -399,7 +324,8 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// Инициализация при загрузке страницы
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LearnPro инициализирован');
     
@@ -417,4 +343,19 @@ document.addEventListener('DOMContentLoaded', function() {
             showRegisterModal();
         });
     }
+    
+    // Проверка авторизации на защищенных страницах
+    if (window.location.pathname.includes('dashboard.html') || 
+        window.location.pathname.includes('courses.html')) {
+        const user = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+        if (!user.email) {
+            window.location.href = 'index.html';
+        }
+    }
 });
+
+// Функция выхода из системы
+function logout() {
+    sessionStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+}
