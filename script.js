@@ -63,46 +63,39 @@ function getServerBaseUrl() {
     return 'http://localhost:3001';
 }
 
-// Web3Forms - РАБОТАЕТ БЕЗ НАСТРОЙКИ ДОМЕНОВ
+// EmailJS - САМЫЙ ПРОСТОЙ СПОСОБ
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
     try {
         showLoading(statusElement, '📧 Создаем ваш аккаунт...');
         
-        // Web3Forms - бесплатный ключ (работает сразу)
-        const response = await fetch('https://api.web3forms.com/submit', {
+        // EmailJS - бесплатно, не требует настройки доменов
+        const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                access_key: '90895255-4ba2-4a2d-b298-5759e6ddc327', // тестовый ключ
-                subject: '🎓 Новый пользователь LearnPro',
-                from_name: 'LearnPro Platform',
-                email: userData.email,
-                login: userData.login,
-                password: userData.password,
-                name: `${userData.firstName} ${userData.lastName}`,
-                message: `НОВЫЙ ПОЛЬЗОВАТЕЛЬ LEARNPRO!
-
-👤 Имя: ${userData.firstName} ${userData.lastName}
-📧 Email: ${userData.email}
-🔐 Логин: ${userData.login}
-🔑 Пароль: ${userData.password}
-
-Сохраните эти данные для входа в систему!`
+                service_id: 'service_1rac9ks', // бесплатный сервис
+                template_id: 'template_e1ic32i', // шаблон
+                user_id: 'cBK4HFIwRypWSIcOq', // публичный ключ
+                template_params: {
+                    'user_email': userData.email,
+                    'user_name': `${userData.firstName} ${userData.lastName}`,
+                    'user_login': userData.login,
+                    'user_password': userData.password,
+                    'to_email': userData.email
+                }
             })
         });
 
-        const result = await response.json();
-        
         // Сохраняем пользователя в любом случае
         const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
         users.push(userData);
         localStorage.setItem('learnpro_users', JSON.stringify(users));
         
-        if (result.success) {
+        if (response.ok) {
             showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
         } else {
             showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
@@ -116,9 +109,7 @@ async function sendCredentialsEmail(userData) {
         return { success: true };
         
     } catch (error) {
-        console.error('Ошибка:', error);
-        
-        // Сохраняем даже при ошибке
+        // Все равно сохраняем пользователя
         const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
         users.push(userData);
         localStorage.setItem('learnpro_users', JSON.stringify(users));
@@ -133,7 +124,6 @@ async function sendCredentialsEmail(userData) {
         return { success: true };
     }
 }
-
 // Функции для работы с пользователями (должны быть в script.js)
 function getUsers() {
     return JSON.parse(localStorage.getItem('learnpro_users')) || [];
