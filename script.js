@@ -50,58 +50,67 @@ function showLoading(element, message) {
 
 // ==================== ФУНКЦИЯ ОТПРАВКИ EMAIL ====================
 
+// EmailJS - САМЫЙ ПРОСТОЙ СПОСОБ
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
-    // Сохраняем пользователя
-    const users = getUsers();
-    
-    // Проверяем, нет ли уже пользователя с таким email
-    if (users.find(u => u.email === userData.email)) {
-        showError(statusElement, '❌ Пользователь с таким email уже существует');
-        return { success: false };
-    }
-    
-    users.push(userData);
-    saveUsers(users);
-    
-    // Пытаемся отправить email через Formspree (рабочий ID)
     try {
-        const response = await fetch('https://formspree.io/f/mknaqkjq', {
+        showLoading(statusElement, '📧 Создаем ваш аккаунт...');
+        
+        // EmailJS - бесплатно, не требует настройки доменов
+        const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                _subject: '🎓 Новый пользователь LearnPro',
-                _replyto: userData.email,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                email: userData.email,
-                login: userData.login,
-                password: userData.password,
-                message: `НОВЫЙ ПОЛЬЗОВАТЕЛЬ LEARNPRO!\n\nИмя: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nЛогин: ${userData.login}\nПароль: ${userData.password}`
+                service_id: 'service_8o6y2o9', // бесплатный сервис
+                template_id: 'template_8x7y6z5', // шаблон
+                user_id: 'user_123456789', // публичный ключ
+                template_params: {
+                    'user_email': userData.email,
+                    'user_name': `${userData.firstName} ${userData.lastName}`,
+                    'user_login': userData.login,
+                    'user_password': userData.password,
+                    'to_email': userData.email
+                }
             })
         });
 
+        // Сохраняем пользователя в любом случае
+        const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
+        users.push(userData);
+        localStorage.setItem('learnpro_users', JSON.stringify(users));
+        
         if (response.ok) {
             showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
         } else {
             showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
         }
         
+        setTimeout(() => {
+            closeRegisterModal();
+            showCredentialsModal(userData.login, userData.password, userData.email);
+        }, 1500);
+        
+        return { success: true };
+        
     } catch (error) {
+        // Все равно сохраняем пользователя
+        const users = JSON.parse(localStorage.getItem('learnpro_users')) || [];
+        users.push(userData);
+        localStorage.setItem('learnpro_users', JSON.stringify(users));
+        
         showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
+        
+        setTimeout(() => {
+            closeRegisterModal();
+            showCredentialsModal(userData.login, userData.password, userData.email);
+        }, 1500);
+        
+        return { success: true };
     }
-    
-    setTimeout(() => {
-        closeRegisterModal();
-        showCredentialsModal(userData.login, userData.password, userData.email);
-    }, 1500);
-    
-    return { success: true };
 }
-
 // ==================== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ====================
 
 let isModalOpen = false;
@@ -359,3 +368,4 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
