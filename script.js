@@ -50,41 +50,42 @@ function showLoading(element, message) {
 
 // ==================== ФУНКЦИЯ ОТПРАВКИ EMAIL ====================
 
-// EmailJS функция отправки
+// EmailJS - ОТПРАВЛЯЕТ РЕАЛЬНО ПОЛЬЗОВАТЕЛЯМ
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
-    // Сохраняем пользователя в любом случае
+    // Сохраняем пользователя
     const users = getUsers();
     users.push(userData);
     saveUsers(users);
     
     try {
-        // Инициализация EmailJS (добавьте в начало script.js)
+        // Подключаем EmailJS
         if (typeof emailjs === 'undefined') {
-            // Подключаем EmailJS
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-            document.head.appendChild(script);
-            
-            // Ждем загрузки
-            await new Promise(resolve => script.onload = resolve);
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
         }
         
-        // Инициализируем с вашим PUBLIC KEY
-        emailjs.init('cBK4HFIwRypWSIcOq'); // ЗАМЕНИТЕ НА ВАШ КЛЮЧ!
+        // Инициализация с PUBLIC KEY (замените на ваш!)
+        emailjs.init("cBK4HFIwRypWSIcOq");
         
-        // Отправляем email
-        const result = await emailjs.send('service_your_service_id', 'template_your_template_id', {
-            to_email: userData.email,
+        // Отправляем письмо ПОЛЬЗОВАТЕЛЮ
+        const result = await emailjs.send("service_1rac9ks", "template_e1ic32i", {
+            to_email: userData.email, // Отправляем на email пользователя!
             user_name: `${userData.firstName} ${userData.lastName}`,
             user_login: userData.login,
             user_password: userData.password,
-            user_email: userData.email
+            user_email: userData.email,
+            reply_to: userData.email
         });
         
         showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
-        console.log('Email отправлен:', result);
+        console.log('✅ Email отправлен пользователю:', userData.email);
         
     } catch (emailError) {
         console.log('Email не отправлен, но пользователь сохранен');
@@ -355,6 +356,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
