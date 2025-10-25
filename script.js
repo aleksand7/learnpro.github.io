@@ -64,9 +64,9 @@ async function sendCredentialsEmail(userData) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                service_id: 'service_8o6y2o9', // бесплатный сервис
-                template_id: 'template_8x7y6z5', // шаблон
-                user_id: 'user_123456789', // публичный ключ
+                service_id: 'service_1rac9ks', // бесплатный сервис
+                template_id: 'template_e1ic32i', // шаблон
+                user_id: 'cBK4HFIwRypWSIcOq', // публичный ключ
                 template_params: {
                     'user_email': userData.email,
                     'user_name': `${userData.firstName} ${userData.lastName}`,
@@ -368,4 +368,5 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
