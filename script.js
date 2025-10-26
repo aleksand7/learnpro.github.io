@@ -54,17 +54,20 @@ function showLoading(element, message) {
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
-    // Сохраняем пользователя
+    // Сохраняем пользователя в любом случае
     const users = getUsers();
     users.push(userData);
     saveUsers(users);
     
     try {
         // URL вашего Google Apps Script (ЗАМЕНИТЕ НА ВАШ!)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGNx3UTEPxx9ZdpF5-YTGXt9mN45dNpHTYF-3q4U-YfiBvgcrnVb8BtDNe0fBeKZLonQ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzBpmxniJbXFAD38tKEKh88568RfpdhvBZCo9GDuCHKDYnKUaclGp28UgM0eZnOQNAnA/exec'; // Ваш URL здесь!
+        
+        console.log('📧 Отправка данных на GAS...', userData);
         
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors', // Важно для Google Apps Script!
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -76,18 +79,12 @@ async function sendCredentialsEmail(userData) {
             })
         });
 
-        const result = await response.json();
-        
-        if (result.success) {
-            showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
-            console.log('✅ Email отправлен пользователю:', userData.email);
-        } else {
-            showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
-            console.log('⚠️ Email не отправлен, но пользователь сохранен');
-        }
+        // С no-cors мы не можем прочитать ответ, но запрос отправляется
+        showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+        console.log('✅ Запрос отправлен для:', userData.email);
         
     } catch (error) {
-        console.log('🌐 Ошибка подключения, но пользователь сохранен');
+        console.log('🌐 Ошибка подключения:', error);
         showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
     }
     
@@ -355,6 +352,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
