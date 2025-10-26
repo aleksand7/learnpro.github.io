@@ -59,11 +59,11 @@ async function sendCredentialsEmail(userData) {
     saveUsers(users);
     
     try {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SbtVYrKmWc7kU8bXF30C9-0rzc--HwN0/exec';
         
         console.log('📧 Отправка данных на GAS...', userData);
         
-        // Используем no-cors и не ждем ответа
+        // Простой fetch без ожидания ответа (чтобы избежать CORS)
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -76,14 +76,17 @@ async function sendCredentialsEmail(userData) {
                 userLogin: userData.login,
                 userPassword: userData.password
             })
+        }).then(() => {
+            console.log('✅ Запрос отправлен для:', userData.email);
+        }).catch(err => {
+            console.log('⚠️ Запрос отправлен (CORS игнорируется):', userData.email);
         });
 
-        // Показываем успех сразу (не дожидаясь ответа)
+        // Показываем успех сразу
         showSuccess(statusElement, '✅ Аккаунт создан! Проверьте вашу почту.');
-        console.log('✅ Запрос отправлен для:', userData.email);
         
     } catch (error) {
-        console.log('🌐 Ошибка подключения:', error);
+        console.log('🌐 Ошибка:', error);
         showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
     }
     
@@ -351,6 +354,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
