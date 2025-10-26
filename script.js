@@ -61,7 +61,7 @@ async function sendCredentialsEmail(userData) {
     
     try {
         // URL вашего Google Apps Script (ЗАМЕНИТЕ НА ВАШ!)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxW0-C5enjbhoYBAjSKCw6VlM5hbg3s_B7jQ-t8pZZLO0SoZ6HrqTn8gwQ7SdUNWIWnWQ/exec'; // Ваш URL здесь!
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec'; // Ваш URL здесь!
         
         console.log('📧 Отправка данных на GAS...', userData);
         
@@ -352,6 +352,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
