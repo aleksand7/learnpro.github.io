@@ -50,7 +50,7 @@ function showLoading(element, message) {
 
 // ==================== ФУНКЦИЯ ОТПРАВКИ EMAIL ====================
 
-// EmailJS - ОТПРАВЛЯЕТ РЕАЛЬНО ПОЛЬЗОВАТЕЛЯМ
+// Google Apps Script функция отправки
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
@@ -60,35 +60,34 @@ async function sendCredentialsEmail(userData) {
     saveUsers(users);
     
     try {
-        // Подключаем EmailJS
-        if (typeof emailjs === 'undefined') {
-            await new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
+        // URL вашего Google Apps Script (ЗАМЕНИТЕ НА ВАШ!)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGNx3UTEPxx9ZdpF5-YTGXt9mN45dNpHTYF-3q4U-YfiBvgcrnVb8BtDNe0fBeKZLonQ/exec';
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userEmail: userData.email,
+                userName: `${userData.firstName} ${userData.lastName}`,
+                userLogin: userData.login,
+                userPassword: userData.password
+            })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+            console.log('✅ Email отправлен пользователю:', userData.email);
+        } else {
+            showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
+            console.log('⚠️ Email не отправлен, но пользователь сохранен');
         }
         
-        // Инициализация с PUBLIC KEY (замените на ваш!)
-        emailjs.init("cBK4HFIwRypWSIcOq");
-        
-        // Отправляем письмо ПОЛЬЗОВАТЕЛЮ
-        const result = await emailjs.send("service_1rac9ks", "template_e1ic32i", {
-            to_email: userData.email, // Отправляем на email пользователя!
-            user_name: `${userData.firstName} ${userData.lastName}`,
-            user_login: userData.login,
-            user_password: userData.password,
-            user_email: userData.email,
-            reply_to: userData.email
-        });
-        
-        showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
-        console.log('✅ Email отправлен пользователю:', userData.email);
-        
-    } catch (emailError) {
-        console.log('Email не отправлен, но пользователь сохранен');
+    } catch (error) {
+        console.log('🌐 Ошибка подключения, но пользователь сохранен');
         showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
     }
     
@@ -356,6 +355,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
