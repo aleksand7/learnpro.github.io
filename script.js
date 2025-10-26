@@ -58,29 +58,64 @@ async function sendCredentialsEmail(userData) {
     users.push(userData);
     saveUsers(users);
     
-    // Всегда показываем успех
+    // ВСЕГДА показываем успех
     showSuccess(statusElement, '✅ Аккаунт создан! Данные сохранены.');
+    
+    // Отправляем письмо через Image запрос (обход CORS)
+    setTimeout(() => {
+        sendEmailNoCors(userData);
+    }, 100);
     
     setTimeout(() => {
         closeRegisterModal();
         showCredentialsModal(userData.login, userData.password, userData.email);
     }, 1500);
     
-    // Отправляем письмо в фоне (не блокируем интерфейс)
-    setTimeout(() => {
-        fetch('https://script.google.com/macros/s/AKfycbynyRrA5SbtVYrKmWc7kU8bXF30C9-0rzc--HwN0/exec', {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                userEmail: userData.email,
-                userName: `${userData.firstName} ${userData.lastName}`,
-                userLogin: userData.login,
-                userPassword: userData.password
-            })
-        });
-    }, 100);
-    
     return { success: true };
+}
+
+// Функция обхода CORS через Image
+function sendEmailNoCors(userData) {
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec';
+    
+    // Создаем скрытую форму
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SCRIPT_URL;
+    form.target = 'hiddenFrame';
+    form.style.display = 'none';
+    
+    // Добавляем данные как скрытые поля
+    const data = {
+        userEmail: userData.email,
+        userName: `${userData.firstName} ${userData.lastName}`,
+        userLogin: userData.login,
+        userPassword: userData.password
+    };
+    
+    for (const [key, value] of Object.entries(data)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    }
+    
+    // Создаем скрытый iframe для ответа
+    let iframe = document.getElementById('hiddenFrame');
+    if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = 'hiddenFrame';
+        iframe.id = 'hiddenFrame';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    console.log('📧 Письмо отправляется для:', userData.email);
 }
 // ==================== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ====================
 
@@ -339,6 +374,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
