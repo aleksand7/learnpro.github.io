@@ -65,19 +65,27 @@ async function sendCredentialsEmail(userData) {
         
         console.log('📧 Отправка данных на GAS...', userData);
         
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', // Важно для Google Apps Script!
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userEmail: userData.email,
-                userName: `${userData.firstName} ${userData.lastName}`,
-                userLogin: userData.login,
-                userPassword: userData.password
-            })
-        });
+const response = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        userEmail: userData.email,
+        userName: `${userData.firstName} ${userData.lastName}`,
+        userLogin: userData.login,
+        userPassword: userData.password
+    })
+});
+
+// Проверяем ответ
+if (response.ok) {
+    const result = await response.json();
+    console.log('✅ Ответ от GAS:', result);
+    showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+} else {
+    throw new Error(`HTTP error! status: ${response.status}`);
+}
 
         // С no-cors мы не можем прочитать ответ, но запрос отправляется
         showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
@@ -352,6 +360,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
