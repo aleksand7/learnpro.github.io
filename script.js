@@ -50,7 +50,6 @@ function showLoading(element, message) {
 
 // ==================== ФУНКЦИЯ ОТПРАВКИ EMAIL ====================
 
-// Google Apps Script функция отправки
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
@@ -60,35 +59,27 @@ async function sendCredentialsEmail(userData) {
     saveUsers(users);
     
     try {
-        // URL вашего Google Apps Script (ЗАМЕНИТЕ НА ВАШ!)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec'; // Ваш URL здесь!
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec';
         
         console.log('📧 Отправка данных на GAS...', userData);
         
-const response = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        userEmail: userData.email,
-        userName: `${userData.firstName} ${userData.lastName}`,
-        userLogin: userData.login,
-        userPassword: userData.password
-    })
-});
+        // Используем no-cors и не ждем ответа
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userEmail: userData.email,
+                userName: `${userData.firstName} ${userData.lastName}`,
+                userLogin: userData.login,
+                userPassword: userData.password
+            })
+        });
 
-// Проверяем ответ
-if (response.ok) {
-    const result = await response.json();
-    console.log('✅ Ответ от GAS:', result);
-    showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
-} else {
-    throw new Error(`HTTP error! status: ${response.status}`);
-}
-
-        // С no-cors мы не можем прочитать ответ, но запрос отправляется
-        showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+        // Показываем успех сразу (не дожидаясь ответа)
+        showSuccess(statusElement, '✅ Аккаунт создан! Проверьте вашу почту.');
         console.log('✅ Запрос отправлен для:', userData.email);
         
     } catch (error) {
@@ -360,6 +351,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
