@@ -50,53 +50,43 @@ function showLoading(element, message) {
 
 // ==================== ФУНКЦИЯ ОТПРАВКИ EMAIL ====================
 
+// Google Apps Script функция отправки
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
-    // Сохраняем пользователя
+    // Сохраняем пользователя в любом случае
     const users = getUsers();
     users.push(userData);
     saveUsers(users);
     
-    // ВСЕГДА показываем успех
-    showSuccess(statusElement, '✅ Аккаунт создан! Данные сохранены.');
-    
-    // Отправляем письмо через Image запрос (обход CORS)
-    setTimeout(() => {
-        sendEmailNoCors(userData);
-    }, 100);
-    
-    setTimeout(() => {
-        closeRegisterModal();
-        showCredentialsModal(userData.login, userData.password, userData.email);
-    }, 1500);
-    
-    return { success: true };
-}
+    try {
+        // URL вашего Google Apps Script (ЗАМЕНИТЕ НА ВАШ!)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec'; // Ваш URL здесь!
+        
+        console.log('📧 Отправка данных на GAS...', userData);
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Важно для Google Apps Script!
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userEmail: userData.email,
+                userName: `${userData.firstName} ${userData.lastName}`,
+                userLogin: userData.login,
+                userPassword: userData.password
+            })
+        });
 
-// Функция обхода CORS через Image
-// Временно используйте GET параметры вместо POST
-function sendCredentialsEmail(userData) {
-    const statusElement = document.getElementById('registerStatus');
-    
-    // Сохраняем пользователя
-    const users = getUsers();
-    users.push(userData);
-    saveUsers(users);
-    
-    // Показываем успех
-    showSuccess(statusElement, '✅ Аккаунт создан!');
-    
-    // Отправляем через GET (проще для отладки)
-    const params = new URLSearchParams({
-        userEmail: userData.email,
-        userName: `${userData.firstName} ${userData.lastName}`,
-        userLogin: userData.login,
-        userPassword: userData.password
-    });
-    
-    // Открываем в новой вкладке для теста
-    window.open(`https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec${params}`, '_blank');
+        // С no-cors мы не можем прочитать ответ, но запрос отправляется
+        showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+        console.log('✅ Запрос отправлен для:', userData.email);
+        
+    } catch (error) {
+        console.log('🌐 Ошибка подключения:', error);
+        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
+    }
     
     setTimeout(() => {
         closeRegisterModal();
@@ -362,6 +352,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
