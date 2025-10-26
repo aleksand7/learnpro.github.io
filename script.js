@@ -96,7 +96,7 @@ function sendCredentialsEmail(userData) {
     });
     
     // Открываем в новой вкладке для теста
-    window.open(`https://script.google.com/macros/s/AKfycbynyRrA5SbtVYrKmWc7kU8bXF30C9-0rzc--HwN0/exec?${params}`, '_blank');
+    window.open(`https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec${params}`, '_blank');
     
     setTimeout(() => {
         closeRegisterModal();
@@ -362,6 +362,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
