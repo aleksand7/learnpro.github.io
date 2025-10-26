@@ -75,47 +75,35 @@ async function sendCredentialsEmail(userData) {
 }
 
 // Функция обхода CORS через Image
-function sendEmailNoCors(userData) {
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SwtvYrKmVk7Ku8bxF3OC9-0rzcXH5ppVJqmMZGrGvgdgMIuKLw9q6HFdW8yGw/exec';
+// Временно используйте GET параметры вместо POST
+function sendCredentialsEmail(userData) {
+    const statusElement = document.getElementById('registerStatus');
     
-    // Создаем скрытую форму
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = SCRIPT_URL;
-    form.target = 'hiddenFrame';
-    form.style.display = 'none';
+    // Сохраняем пользователя
+    const users = getUsers();
+    users.push(userData);
+    saveUsers(users);
     
-    // Добавляем данные как скрытые поля
-    const data = {
+    // Показываем успех
+    showSuccess(statusElement, '✅ Аккаунт создан!');
+    
+    // Отправляем через GET (проще для отладки)
+    const params = new URLSearchParams({
         userEmail: userData.email,
         userName: `${userData.firstName} ${userData.lastName}`,
         userLogin: userData.login,
         userPassword: userData.password
-    };
+    });
     
-    for (const [key, value] of Object.entries(data)) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-    }
+    // Открываем в новой вкладке для теста
+    window.open(`https://script.google.com/macros/s/AKfycbynyRrA5SbtVYrKmWc7kU8bXF30C9-0rzc--HwN0/exec?${params}`, '_blank');
     
-    // Создаем скрытый iframe для ответа
-    let iframe = document.getElementById('hiddenFrame');
-    if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.name = 'hiddenFrame';
-        iframe.id = 'hiddenFrame';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-    }
+    setTimeout(() => {
+        closeRegisterModal();
+        showCredentialsModal(userData.login, userData.password, userData.email);
+    }, 1500);
     
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-    
-    console.log('📧 Письмо отправляется для:', userData.email);
+    return { success: true };
 }
 // ==================== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ====================
 
@@ -374,6 +362,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
