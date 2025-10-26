@@ -53,47 +53,32 @@ function showLoading(element, message) {
 async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
     
-    // Сохраняем пользователя в любом случае
+    // Сохраняем пользователя
     const users = getUsers();
     users.push(userData);
     saveUsers(users);
     
-    try {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynyRrA5SbtVYrKmWc7kU8bXF30C9-0rzc--HwN0/exec';
-        
-        console.log('📧 Отправка данных на GAS...', userData);
-        
-        // Простой fetch без ожидания ответа (чтобы избежать CORS)
-        fetch(SCRIPT_URL, {
+    // Всегда показываем успех
+    showSuccess(statusElement, '✅ Аккаунт создан! Данные сохранены.');
+    
+    setTimeout(() => {
+        closeRegisterModal();
+        showCredentialsModal(userData.login, userData.password, userData.email);
+    }, 1500);
+    
+    // Отправляем письмо в фоне (не блокируем интерфейс)
+    setTimeout(() => {
+        fetch('https://script.google.com/macros/s/AKfycbynyRrA5SbtVYrKmWc7kU8bXF30C9-0rzc--HwN0/exec', {
             method: 'POST',
             mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify({
                 userEmail: userData.email,
                 userName: `${userData.firstName} ${userData.lastName}`,
                 userLogin: userData.login,
                 userPassword: userData.password
             })
-        }).then(() => {
-            console.log('✅ Запрос отправлен для:', userData.email);
-        }).catch(err => {
-            console.log('⚠️ Запрос отправлен (CORS игнорируется):', userData.email);
         });
-
-        // Показываем успех сразу
-        showSuccess(statusElement, '✅ Аккаунт создан! Проверьте вашу почту.');
-        
-    } catch (error) {
-        console.log('🌐 Ошибка:', error);
-        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
-    }
-    
-    setTimeout(() => {
-        closeRegisterModal();
-        showCredentialsModal(userData.login, userData.password, userData.email);
-    }, 1500);
+    }, 100);
     
     return { success: true };
 }
@@ -354,6 +339,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
