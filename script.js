@@ -1,11 +1,10 @@
 // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
 let isModalOpen = false;
+let supabase = null;
 
 // ==================== SUPABASE КОНФИГУРАЦИЯ ====================
 const SUPABASE_URL = 'https://qlpgkuuoirkkklzdkflx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFscGdrdXVvaXJra2tsemRrZmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3Mzk1MTQsImV4cCI6MjA3NzMxNTUxNH0.huOLRPI9HdYLmayuvkDqOmRLFtBhvOdGr6oSPobq7Yc';
-
-let supabase = null;
 
 // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
@@ -136,6 +135,23 @@ function closeAllModals() {
     enableBodyScroll();
 }
 
+// ==================== ФУНКЦИИ ДЛЯ SUPABASE ====================
+
+// Функция для инициализации Supabase
+function initSupabase() {
+    try {
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase инициализирован');
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.warn('❌ Ошибка инициализации Supabase:', error);
+        return false;
+    }
+}
+
 // ==================== ОБРАБОТЧИКИ ФОРМ ====================
 
 // Обработка формы регистрации
@@ -179,7 +195,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             courses: []
         };
         
-        // Сохраняем пользователя
+        // Сохраняем пользователя в localStorage
         const users = getUsers();
         
         // Проверяем нет ли пользователя с таким email
@@ -192,6 +208,31 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         
         users.push(userData);
         saveUsers(users);
+        
+        // Пытаемся сохранить в Supabase если доступен
+        if (supabase) {
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .insert([{
+                        email: userData.email,
+                        first_name: userData.firstName,
+                        last_name: userData.lastName,
+                        login: userData.login,
+                        password: userData.password,
+                        registered_at: userData.registeredAt,
+                        courses: userData.courses
+                    }]);
+                
+                if (error) {
+                    console.warn('⚠️ Не удалось сохранить в Supabase:', error);
+                } else {
+                    console.log('✅ Пользователь сохранен в Supabase');
+                }
+            } catch (dbError) {
+                console.warn('⚠️ Ошибка Supabase:', dbError);
+            }
+        }
         
         showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
         
@@ -209,7 +250,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
 });
 
 // Обработка формы входа
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const email = document.getElementById('loginEmail').value.trim();
@@ -223,9 +264,39 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     showLoading(statusElement, '⏳ Проверяем данные...');
     
     try {
-        // Ищем пользователя в localStorage
-        const users = getUsers();
-        const user = users.find(u => u.email === email && u.password === password);
+        let user = null;
+        
+        // Сначала пробуем найти в Supabase
+        if (supabase) {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('password', password)
+                    .single();
+                
+                if (!error && data) {
+                    user = {
+                        firstName: data.first_name,
+                        lastName: data.last_name,
+                        email: data.email,
+                        login: data.login,
+                        password: data.password,
+                        registeredAt: data.registered_at,
+                        courses: data.courses || []
+                    };
+                }
+            } catch (dbError) {
+                console.warn('⚠️ Ошибка Supabase, пробуем localStorage:', dbError);
+            }
+        }
+        
+        // Если не нашли в Supabase, ищем в localStorage
+        if (!user) {
+            const users = getUsers();
+            user = users.find(u => u.email === email && u.password === password);
+        }
         
         if (user) {
             showSuccess(statusElement, '✅ Вход выполнен! Перенаправляем...');
@@ -303,29 +374,22 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-// Функция для инициализации Supabase
-function initSupabase() {
-    if (window.supabase && window.supabase.createClient) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase инициализирован');
-        return true;
-    }
-    return false;
-}
-
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LearnPro инициализирован');
     
-    // Пытаемся инициализировать Supabase если библиотека загружена
-    setTimeout(() => {
-        if (initSupabase()) {
-            console.log('✅ Supabase подключен');
-        } else {
-            console.log('⚠️ Работаем в оффлайн режиме с localStorage');
-        }
-    }, 1000);
+    // Загружаем Supabase библиотеку
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    script.onload = function() {
+        console.log('📦 Supabase библиотека загружена');
+        initSupabase();
+    };
+    script.onerror = function() {
+        console.log('⚠️ Не удалось загрузить Supabase, работаем с localStorage');
+    };
+    document.head.appendChild(script);
     
     // Обработчики для кнопок выбора курса
     document.querySelectorAll('.course-btn').forEach(button => {
@@ -344,7 +408,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Проверка авторизации на защищенных страницах
     if (window.location.pathname.includes('dashboard.html') || 
-        window.location.pathname.includes('courses.html')) {
+        window.location.pathname.includes('courses.html') ||
+        window.location.pathname.includes('admin.html')) {
         const user = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
         if (!user.email) {
             window.location.href = 'index.html';
