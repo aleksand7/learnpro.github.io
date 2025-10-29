@@ -1,40 +1,12 @@
+// ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+let isModalOpen = false;
+
 // ==================== SUPABASE КОНФИГУРАЦИЯ ====================
 const SUPABASE_URL = 'https://qlpgkuuoirkkklzdkflx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFscGdrdXVvaXJra2tsemRrZmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3Mzk1MTQsImV4cCI6MjA3NzMxNTUxNH0.huOLRPI9HdYLmayuvkDqOmRLFtBhvOdGr6oSPobq7Yc';
 
 let supabase = null;
 
-// Функция для инициализации Supabase
-async function initSupabase() {
-    if (window.supabase) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase инициализирован');
-        return true;
-    }
-    return false;
-}
-
-// Загружаем Supabase JS клиент
-function loadSupabase() {
-    return new Promise((resolve, reject) => {
-        if (window.supabase) {
-            resolve();
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-        script.onload = () => {
-            console.log('📦 Supabase загружен');
-            resolve();
-        };
-        script.onerror = () => {
-            console.error('❌ Ошибка загрузки Supabase');
-            reject(new Error('Failed to load Supabase'));
-        };
-        document.head.appendChild(script);
-    });
-}
 // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
 // Функция проверки email
@@ -85,131 +57,7 @@ function showLoading(element, message) {
     element.innerHTML = message;
 }
 
-// ==================== ФУНКЦИЯ ОТПРАВКИ EMAIL ====================
-
-// Google Apps Script функция отправки
-async function sendCredentialsEmail(userData) {
-    const statusElement = document.getElementById('registerStatus');
-    
-    // Сохраняем пользователя в любом случае
-    const users = getUsers();
-    users.push(userData);
-    saveUsers(users);
-    
-    try {
-        // URL вашего Google Apps Script (ЗАМЕНИТЕ НА ВАШ!)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxM824sxbXabVbUuzjNZ0syLMNO22ZDQcQ6sKpnDhnhlxo8QQb2KahyPUYwpv1lXCab/exec'; // Ваш URL здесь!
-        
-        console.log('📧 Отправка данных на GAS...', userData);
-        
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', // Важно для Google Apps Script!
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userEmail: userData.email,
-                userName: `${userData.firstName} ${userData.lastName}`,
-                userLogin: userData.login,
-                userPassword: userData.password
-            })
-        });
-
-        // С no-cors мы не можем прочитать ответ, но запрос отправляется
-        showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
-        console.log('✅ Запрос отправлен для:', userData.email);
-        
-    } catch (error) {
-        console.log('🌐 Ошибка подключения:', error);
-        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
-    }
-    
-    setTimeout(() => {
-        closeRegisterModal();
-        showCredentialsModal(userData.login, userData.password, userData.email);
-    }, 1500);
-    
-    return { success: true };
-}
-
-// ==================== ФУНКЦИИ ДЛЯ РАБОТЫ С БАЗОЙ ДАННЫХ ====================
-
-async function registerUserInDB(userData) {
-    if (!supabase) {
-        console.warn('Supabase не доступен, используем localStorage');
-        return { success: true }; // Возвращаем успех для оффлайн режима
-    }
-    
-    try {
-        const { data, error } = await supabase
-            .from('users')
-            .insert([{
-                email: userData.email,
-                first_name: userData.firstName,
-                last_name: userData.lastName,
-                login: userData.login,
-                password: userData.password,
-                registered_at: new Date().toISOString(),
-                courses: []
-            }])
-            .select();
-        
-        return { success: !error, data, error };
-    } catch (error) {
-        console.error('Ошибка регистрации в БД:', error);
-        return { success: false, error };
-    }
-}
-
-async function findUserInDB(email, password) {
-    if (!supabase) {
-        // Оффлайн режим - ищем в localStorage
-        const users = getUsers();
-        const user = users.find(u => u.email === email && u.password === password);
-        return { success: !!user, user };
-    }
-    
-    try {
-        const { data, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', email)
-            .eq('password', password)
-            .single();
-        
-        return { success: !error, user: data, error };
-    } catch (error) {
-        console.error('Ошибка входа:', error);
-        return { success: false, error };
-    }
-}
-
-async function checkUserExists(email) {
-    if (!supabase) {
-        const users = getUsers();
-        const user = users.find(u => u.email === email);
-        return { exists: !!user };
-    }
-    
-    try {
-        const { data, error } = await supabase
-            .from('users')
-            .select('email')
-            .eq('email', email)
-            .single();
-            
-        return { exists: !!data, error };
-    } catch (error) {
-        return { exists: false, error };
-    }
-}
 // ==================== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ====================
-
-// ==================== УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ====================
-
-// ПЕРЕМЕСТИТЕ ЭТО В НАЧАЛО СЕКЦИИ, ПЕРЕД ФУНКЦИЯМИ
-let isModalOpen = false; // ← ДОБАВЬТЕ ЭТУ СТРОКУ В НАЧАЛО СЕКЦИИ
 
 function disableBodyScroll() {
     if (isModalOpen) return;
@@ -291,54 +139,77 @@ function closeAllModals() {
 // ==================== ОБРАБОТЧИКИ ФОРМ ====================
 
 // Обработка формы регистрации
-// ОБНОВЛЕННАЯ ФУНКЦИЯ РЕГИСТРАЦИИ С БАЗОЙ ДАННЫХ
-async function sendCredentialsEmail(userData) {
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
     const statusElement = document.getElementById('registerStatus');
+    const submitBtn = this.querySelector('button[type="submit"]');
+    
+    // Валидация
+    if (!firstName || !lastName || !email) {
+        showError(statusElement, '❌ Заполните все поля');
+        return;
+    }
+    
+    if (!isValidEmail(email)) {
+        showError(statusElement, '❌ Введите корректный email');
+        return;
+    }
+    
+    // Показываем загрузку
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Создаем аккаунт...';
+    showLoading(statusElement, '⏳ Создаем ваш аккаунт...');
     
     try {
-        showLoading(statusElement, '📧 Проверяем данные...');
-
-        // Проверяем нет ли пользователя в БД
-        const checkResult = await checkUserExists(userData.email);
-        if (checkResult.exists) {
-            showError(statusElement, '❌ Пользователь с таким email уже существует');
-            return { success: false };
-        }
-
-        // Регистрируем в БД
-        const dbResult = await registerUserInDB(userData);
-        if (!dbResult.success) {
-            showError(statusElement, '❌ Ошибка при создании аккаунта');
-            return { success: false };
-        }
-
-        // Сохраняем также в localStorage для совместимости
+        // Генерируем логин и пароль
+        const login = generateLogin(firstName, lastName);
+        const password = generatePassword();
+        
+        const userData = {
+            firstName,
+            lastName,
+            email,
+            login,
+            password,
+            registeredAt: new Date().toISOString(),
+            courses: []
+        };
+        
+        // Сохраняем пользователя
         const users = getUsers();
+        
+        // Проверяем нет ли пользователя с таким email
+        if (users.find(user => user.email === email)) {
+            showError(statusElement, '❌ Пользователь с таким email уже существует');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Создать аккаунт';
+            return;
+        }
+        
         users.push(userData);
         saveUsers(users);
-
-        // Отправляем email (ваш существующий код)
-        await sendEmailViaGoogleAppsScript(userData);
-
-        showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+        
+        showSuccess(statusElement, '✅ Аккаунт создан! Сохраните данные ниже.');
         
         setTimeout(() => {
             closeRegisterModal();
-            showCredentialsModal(userData.login, userData.password, userData.email);
+            showCredentialsModal(login, password, email);
         }, 1500);
-        
-        return { success: true };
         
     } catch (error) {
         console.error('Ошибка регистрации:', error);
         showError(statusElement, '❌ Ошибка при создании аккаунта');
-        return { success: false };
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Создать аккаунт';
     }
-}
+});
 
 // Обработка формы входа
-// ОБНОВЛЕННАЯ ФУНКЦИЯ ВХОДА С БАЗОЙ ДАННЫХ
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
+document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const email = document.getElementById('loginEmail').value.trim();
@@ -352,14 +223,15 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     showLoading(statusElement, '⏳ Проверяем данные...');
     
     try {
-        // Ищем пользователя в БД
-        const result = await findUserInDB(email, password);
+        // Ищем пользователя в localStorage
+        const users = getUsers();
+        const user = users.find(u => u.email === email && u.password === password);
         
-        if (result.success) {
+        if (user) {
             showSuccess(statusElement, '✅ Вход выполнен! Перенаправляем...');
             
             // Сохраняем в sessionStorage
-            sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
             
             // Перенаправление
             setTimeout(() => {
@@ -425,21 +297,35 @@ window.addEventListener('scroll', function() {
     }
 });
 
+// Функция выхода из системы
+function logout() {
+    sessionStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+}
 
+// Функция для инициализации Supabase
+function initSupabase() {
+    if (window.supabase && window.supabase.createClient) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Supabase инициализирован');
+        return true;
+    }
+    return false;
+}
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LearnPro инициализирован');
     
-    try {
-        // Загружаем Supabase
-        await loadSupabase();
-        await initSupabase();
-        console.log('✅ Все зависимости загружены');
-    } catch (error) {
-        console.warn('⚠️ Supabase не загружен, работаем в оффлайн режиме');
-    }
+    // Пытаемся инициализировать Supabase если библиотека загружена
+    setTimeout(() => {
+        if (initSupabase()) {
+            console.log('✅ Supabase подключен');
+        } else {
+            console.log('⚠️ Работаем в оффлайн режиме с localStorage');
+        }
+    }, 1000);
     
     // Обработчики для кнопок выбора курса
     document.querySelectorAll('.course-btn').forEach(button => {
@@ -465,21 +351,3 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
