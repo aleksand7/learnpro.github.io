@@ -1,6 +1,8 @@
 // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
 let isModalOpen = false;
-let supabase = null;
+
+// Отключаем Supabase временно
+console.log('⚠️ Supabase отключен, используем localStorage');
 
 // ==================== SUPABASE КОНФИГУРАЦИЯ ====================
 const SUPABASE_URL = 'https://qlpgkuuoirkkklzdkflx.supabase.co';
@@ -416,3 +418,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
