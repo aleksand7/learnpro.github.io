@@ -1,3 +1,15 @@
+// ==================== SUPABASE КОНФИГУРАЦИЯ ====================
+const SUPABASE_URL = 'https://qlpgkuuoirkkklzdkflx.supabase.co'; // ЗАМЕНИТЕ НА ВАШ URL
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFscGdrdXVvaXJra2tsemRrZmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3Mzk1MTQsImV4cCI6MjA3NzMxNTUxNH0.huOLRPI9HdYLmayuvkDqOmRLFtBhvOdGr6oSPobq7Yc'; // ЗАМЕНИТЕ НА ВАШ КЛЮЧ
+
+// Инициализация Supabase
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Подключаем Supabase JS клиент
+const script = document.createElement('script');
+script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+
+document.head.appendChild(script);
 // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
 // Функция проверки email
@@ -179,65 +191,54 @@ function closeAllModals() {
 // ==================== ОБРАБОТЧИКИ ФОРМ ====================
 
 // Обработка формы регистрации
-document.getElementById('registerForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const firstName = document.getElementById('firstName').value.trim();
-    const lastName = document.getElementById('lastName').value.trim();
-    const email = document.getElementById('email').value.trim();
+// ОБНОВЛЕННАЯ ФУНКЦИЯ РЕГИСТРАЦИИ С БАЗОЙ ДАННЫХ
+async function sendCredentialsEmail(userData) {
     const statusElement = document.getElementById('registerStatus');
-    const submitBtn = this.querySelector('button[type="submit"]');
-    
-    // Валидация
-    if (!firstName || !lastName || !email) {
-        showError(statusElement, '❌ Заполните все поля');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showError(statusElement, '❌ Введите корректный email');
-        return;
-    }
-    
-    // Показываем загрузку
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Создаем аккаунт...';
-    showLoading(statusElement, '⏳ Создаем ваш аккаунт...');
     
     try {
-        // Генерируем логин и пароль
-        const login = generateLogin(firstName, lastName);
-        const password = generatePassword();
-        
-        // Создаем объект пользователя
-        const userData = {
-            firstName,
-            lastName,
-            email,
-            login,
-            password,
-            registeredAt: new Date().toISOString(),
-            courses: []
-        };
-        
-        // Сохраняем пользователя
-        const result = await sendCredentialsEmail(userData);
-        
-        if (!result.success) {
-            showError(statusElement, '❌ Ошибка при создании аккаунта');
+        showLoading(statusElement, '📧 Проверяем данные...');
+
+        // Проверяем нет ли пользователя в БД
+        const checkResult = await checkUserExists(userData.email);
+        if (checkResult.exists) {
+            showError(statusElement, '❌ Пользователь с таким email уже существует');
+            return { success: false };
         }
+
+        // Регистрируем в БД
+        const dbResult = await registerUserInDB(userData);
+        if (!dbResult.success) {
+            showError(statusElement, '❌ Ошибка при создании аккаунта');
+            return { success: false };
+        }
+
+        // Сохраняем также в localStorage для совместимости
+        const users = getUsers();
+        users.push(userData);
+        saveUsers(users);
+
+        // Отправляем email (ваш существующий код)
+        await sendEmailViaGoogleAppsScript(userData);
+
+        showSuccess(statusElement, '✅ Аккаунт создан! Данные отправлены на вашу почту.');
+        
+        setTimeout(() => {
+            closeRegisterModal();
+            showCredentialsModal(userData.login, userData.password, userData.email);
+        }, 1500);
+        
+        return { success: true };
         
     } catch (error) {
         console.error('Ошибка регистрации:', error);
         showError(statusElement, '❌ Ошибка при создании аккаунта');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Создать аккаунт';
+        return { success: false };
     }
-});
+}
 
 // Обработка формы входа
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+// ОБНОВЛЕННАЯ ФУНКЦИЯ ВХОДА С БАЗОЙ ДАННЫХ
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const email = document.getElementById('loginEmail').value.trim();
@@ -250,22 +251,29 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     submitBtn.textContent = 'Вход...';
     showLoading(statusElement, '⏳ Проверяем данные...');
     
-    const users = getUsers();
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-        showSuccess(statusElement, '✅ Вход выполнен! Перенаправляем...');
+    try {
+        // Ищем пользователя в БД
+        const result = await findUserInDB(email, password);
         
-        // Сохраняем текущего пользователя
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        if (result.success) {
+            showSuccess(statusElement, '✅ Вход выполнен! Перенаправляем...');
+            
+            // Сохраняем в sessionStorage
+            sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+            
+            // Перенаправление
+            setTimeout(() => {
+                closeLoginModal();
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        } else {
+            showError(statusElement, '❌ Неверный email или пароль');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Войти';
+        }
         
-        // Перенаправление в личный кабинет
-        setTimeout(() => {
-            closeLoginModal();
-            window.location.href = 'dashboard.html';
-        }, 1500);
-    } else {
-        showError(statusElement, '❌ Неверный email или пароль');
+    } catch (error) {
+        showError(statusElement, '❌ Ошибка входа');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Войти';
     }
