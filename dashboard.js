@@ -1,34 +1,47 @@
-// Проверка авторизации
-function checkAuth() {
-    const userData = sessionStorage.getItem('currentUser');
-    if (!userData) {
-        window.location.href = 'index.html';
-        return null;
+// Загрузка курсов пользователя из БД
+async function loadUserCoursesFromDB(userId) {
+    try {
+        const result = await getUserCoursesFromDB(userId);
+        if (result.success) {
+            return result.courses;
+        }
+        return [];
+    } catch (error) {
+        console.error('Ошибка загрузки курсов:', error);
+        return [];
     }
-    return JSON.parse(userData);
 }
 
-// Загрузка данных пользователя
-function loadUserData() {
+// Обновленная функция загрузки данных пользователя
+async function loadUserData() {
     const user = checkAuth();
     if (!user) return;
 
-    // Заполняем данные в интерфейсе
-    document.getElementById('userAvatar').textContent = 
-        user.firstName.charAt(0) + user.lastName.charAt(0);
-    document.getElementById('welcomeTitle').textContent = 
-        `Добро пожаловать, ${user.firstName}!`;
-    document.getElementById('userEmail').textContent = user.email;
-    
-    document.getElementById('profileName').textContent = 
-        `${user.firstName} ${user.lastName}`;
-    document.getElementById('profileEmail').textContent = user.email;
-    document.getElementById('profileLogin').textContent = user.login;
-    document.getElementById('profileDate').textContent = 
-        new Date(user.registeredAt).toLocaleDateString('ru-RU');
+    try {
+        // Загружаем курсы из БД
+        const userCourses = await loadUserCoursesFromDB(user.id);
+        user.courses = userCourses.map(course => course.course_id);
 
-    // Загружаем курсы пользователя
-    loadUserCourses(user);
+        // Обновляем интерфейс
+        document.getElementById('userAvatar').textContent = 
+            user.first_name.charAt(0) + user.last_name.charAt(0);
+        document.getElementById('welcomeTitle').textContent = 
+            `Добро пожаловать, ${user.first_name}!`;
+        document.getElementById('userEmail').textContent = user.email;
+        
+        document.getElementById('profileName').textContent = 
+            `${user.first_name} ${user.last_name}`;
+        document.getElementById('profileEmail').textContent = user.email;
+        document.getElementById('profileLogin').textContent = user.login;
+        document.getElementById('profileDate').textContent = 
+            new Date(user.registered_at).toLocaleDateString('ru-RU');
+
+        // Загружаем курсы
+        loadUserCourses(user);
+
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+    }
 }
 
 // Загрузка курсов пользователя
@@ -385,4 +398,5 @@ document.addEventListener('DOMContentLoaded', function() {
             event.stopPropagation();
         });
     });
+
 });
