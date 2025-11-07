@@ -46,84 +46,84 @@
         </div>
     </section>
 
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="modal payment-modal">
-        <div class="modal-content compact-payment">
-            <span class="close" onclick="closePaymentModal()">&times;</span>
-            
-            <div class="payment-header">
-                <div class="course-icon-small">💻</div>
-                <div class="payment-course-info">
-                    <h3 id="paymentCourseTitle">Название курса</h3>
-                    <div class="payment-price" id="paymentCoursePrice">0₽</div>
+<!-- Payment Modal -->
+<div id="paymentModal" class="modal payment-modal">
+    <div class="modal-content compact-payment">
+        <span class="close" onclick="closePaymentModal()">&times;</span>
+        
+        <div class="payment-header">
+            <div class="course-icon-small">💻</div>
+            <div class="payment-course-info">
+                <h3 id="paymentCourseTitle">Fullstack-разработка</h3>
+                <div class="payment-price" id="paymentCoursePrice">25 000₽</div>
+            </div>
+        </div>
+
+        <div class="compact-payment-form">
+            <!-- Методы оплаты в одну строку -->
+            <div class="payment-methods-compact">
+                <div class="payment-method-compact selected" data-method="card" onclick="selectPaymentMethod('card')">
+                    <span class="method-icon">💳</span>
+                    <span class="method-name">Карта</span>
+                </div>
+                <div class="payment-method-compact" data-method="yoomoney" onclick="selectPaymentMethod('yoomoney')">
+                    <span class="method-icon">💰</span>
+                    <span class="method-name">ЮMoney</span>
                 </div>
             </div>
 
-            <div class="compact-payment-form">
-                <div class="payment-methods-compact">
-                    <div class="payment-method-compact selected" data-method="card" onclick="selectPaymentMethod('card')">
-                        <span class="method-icon">💳</span>
-                        <span class="method-name">Карта</span>
-                    </div>
-                    <div class="payment-method-compact" data-method="yoomoney" onclick="selectPaymentMethod('yoomoney')">
-                        <span class="method-icon">💰</span>
-                        <span class="method-name">ЮMoney</span>
-                    </div>
+            <!-- Компактная форма карты -->
+            <div id="cardForm" class="card-form">
+                <div class="form-group-compact">
+                    <label>Номер карты</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
                 </div>
 
-                <div id="cardForm" class="card-form">
+                <div class="form-row-compact">
                     <div class="form-group-compact">
-                        <label>Номер карты</label>
-                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        <label>Срок действия</label>
+                        <input type="text" id="cardExpiry" placeholder="ММ/ГГ" maxlength="5">
                     </div>
-
-                    <div class="form-row-compact">
-                        <div class="form-group-compact">
-                            <label>Срок действия</label>
-                            <input type="text" id="cardExpiry" placeholder="ММ/ГГ" maxlength="5">
-                        </div>
-                        <div class="form-group-compact">
-                            <label>CVC</label>
-                            <input type="text" id="cardCvc" placeholder="123" maxlength="3">
-                        </div>
-                    </div>
-
                     <div class="form-group-compact">
-                        <label>Имя владельца</label>
-                        <input type="text" id="cardHolder" placeholder="IVAN IVANOV">
+                        <label>CVC</label>
+                        <input type="text" id="cardCvc" placeholder="123" maxlength="3">
                     </div>
                 </div>
 
-                <div class="order-summary">
-                    <div class="order-line">
-                        <span>Курс:</span>
-                        <span id="summaryCourseName">-</span>
-                    </div>
-                    <div class="order-line">
-                        <span>Сумма:</span>
-                        <span id="finalAmount">0₽</span>
-                    </div>
-                    <div class="order-total">
-                        <span>Итого:</span>
-                        <span id="totalAmount">0₽</span>
-                    </div>
+                <div class="form-group-compact">
+                    <label>Имя владельца</label>
+                    <input type="text" id="cardHolder" placeholder="IVAN IVANOV">
                 </div>
+            </div>
 
-                <button class="pay-now-btn-compact" onclick="processPayment()">
-                    <span class="btn-icon">💳</span>
-                    <span class="btn-text">Оплатить</span>
-                    <span class="btn-amount" id="paymentAmount">0₽</span>
-                </button>
-
-                <div class="payment-security">
-                    <div class="security-info">
-                        <span class="lock-icon">🔒</span>
-                        <span>Безопасная оплата</span>
-                    </div>
+            <!-- Компактная сводка заказа -->
+            <div class="order-summary-compact">
+                <div class="order-line-compact">
+                    <span>Курс:</span>
+                    <span id="summaryCourseName">Fullstack-разработка</span>
                 </div>
+                <div class="order-line-compact">
+                    <span>Сумма:</span>
+                    <span id="finalAmount">25 000₽</span>
+                </div>
+                <div class="order-total-compact">
+                    <span>Итого:</span>
+                    <span id="totalAmount">25 000₽</span>
+                </div>
+            </div>
+
+            <button class="pay-now-btn-compact" onclick="processPayment()">
+                <span class="btn-text">💳 Оплатить</span>
+                <span class="btn-amount" id="paymentAmount">25 000₽</span>
+            </button>
+
+            <div class="payment-security-compact">
+                <span class="lock-icon">🔒</span>
+                <span>Безопасная оплата</span>
             </div>
         </div>
     </div>
+</div>
 
     <script src="courses.js"></script>
 </body>
