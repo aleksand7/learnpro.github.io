@@ -1,47 +1,60 @@
-// Загрузка курсов пользователя из БД
-async function loadUserCoursesFromDB(userId) {
-    try {
-        const result = await getUserCoursesFromDB(userId);
-        if (result.success) {
-            return result.courses;
-        }
-        return [];
-    } catch (error) {
-        console.error('Ошибка загрузки курсов:', error);
-        return [];
+// ==================== АУТЕНТИФИКАЦИЯ ====================
+
+// Проверка авторизации
+function checkAuth() {
+    const user = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+    
+    if (!user.email) {
+        window.location.href = 'index.html';
+        return null;
+    }
+    
+    return user;
+}
+
+// Функции для работы с пользователями
+function getUsers() {
+    return JSON.parse(localStorage.getItem('learnpro_users')) || [];
+}
+
+function saveUsers(users) {
+    localStorage.setItem('learnpro_users', JSON.stringify(users));
+}
+
+// Обновление пользователя в хранилище
+function updateUserInStorage(updatedUser) {
+    const users = getUsers();
+    const userIndex = users.findIndex(u => u.email === updatedUser.email);
+    
+    if (userIndex !== -1) {
+        users[userIndex] = updatedUser;
+        saveUsers(users);
     }
 }
 
-// Обновленная функция загрузки данных пользователя
-async function loadUserData() {
+// ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
+
+// Загрузка данных пользователя
+function loadUserData() {
     const user = checkAuth();
     if (!user) return;
 
-    try {
-        // Загружаем курсы из БД
-        const userCourses = await loadUserCoursesFromDB(user.id);
-        user.courses = userCourses.map(course => course.course_id);
+    // Обновляем интерфейс
+    document.getElementById('userAvatar').textContent = 
+        user.firstName.charAt(0) + user.lastName.charAt(0);
+    document.getElementById('welcomeTitle').textContent = 
+        `Добро пожаловать, ${user.firstName}!`;
+    document.getElementById('userEmail').textContent = user.email;
+    
+    document.getElementById('profileName').textContent = 
+        `${user.firstName} ${user.lastName}`;
+    document.getElementById('profileEmail').textContent = user.email;
+    document.getElementById('profileLogin').textContent = user.login;
+    document.getElementById('profileDate').textContent = 
+        new Date(user.registeredAt).toLocaleDateString('ru-RU');
 
-        // Обновляем интерфейс
-        document.getElementById('userAvatar').textContent = 
-            user.first_name.charAt(0) + user.last_name.charAt(0);
-        document.getElementById('welcomeTitle').textContent = 
-            `Добро пожаловать, ${user.first_name}!`;
-        document.getElementById('userEmail').textContent = user.email;
-        
-        document.getElementById('profileName').textContent = 
-            `${user.first_name} ${user.last_name}`;
-        document.getElementById('profileEmail').textContent = user.email;
-        document.getElementById('profileLogin').textContent = user.login;
-        document.getElementById('profileDate').textContent = 
-            new Date(user.registered_at).toLocaleDateString('ru-RU');
-
-        // Загружаем курсы
-        loadUserCourses(user);
-
-    } catch (error) {
-        console.error('Ошибка загрузки данных:', error);
-    }
+    // Загружаем курсы
+    loadUserCourses(user);
 }
 
 // Загрузка курсов пользователя
@@ -213,42 +226,26 @@ function showCourseDetails(courseId) {
     alert(`Подробности курса "${courseId}" ℹ️`);
 }
 
-// Выход из системы
-function logout() {
-    sessionStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
-}
+// ==================== УДАЛЕНИЕ АККАУНТА ====================
 
-// Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    loadUserData();
-});
-// Добавьте эти функции в dashboard.js
-
-// Показать модальное окно удаления аккаунта
 function showDeleteAccountModal() {
     const user = checkAuth();
     if (!user) return;
     
-    // Сбрасываем форму
     document.getElementById('confirmEmail').value = '';
     document.getElementById('confirmDeleteBtn').disabled = true;
     document.getElementById('deleteStatus').innerHTML = '';
     
-    // Добавляем обработчик для проверки email
     document.getElementById('confirmEmail').addEventListener('input', validateDeleteEmail);
-    
     document.getElementById('deleteAccountModal').style.display = 'block';
     disableBodyScroll();
 }
 
-// Закрыть модальное окно удаления аккаунта
 function closeDeleteAccountModal() {
     document.getElementById('deleteAccountModal').style.display = 'none';
     enableBodyScroll();
 }
 
-// Валидация email при удалении
 function validateDeleteEmail() {
     const user = checkAuth();
     const confirmEmail = document.getElementById('confirmEmail').value.trim();
@@ -267,25 +264,12 @@ function validateDeleteEmail() {
         }
     }
 }
-// Добавьте эти функции в dashboard.js (если их там нет)
-function getUsers() {
-    return JSON.parse(localStorage.getItem('learnpro_users')) || [];
-}
 
-function saveUsers(users) {
-    localStorage.setItem('learnpro_users', JSON.stringify(users));
-}
-
-// Удаление аккаунта
 function deleteAccount() {
     const user = checkAuth();
     const confirmEmail = document.getElementById('confirmEmail').value.trim();
     const statusElement = document.getElementById('deleteStatus');
     const confirmBtn = document.getElementById('confirmDeleteBtn');
-    
-    // Временные функции (добавьте их)
-    const getUsers = () => JSON.parse(localStorage.getItem('learnpro_users')) || [];
-    const saveUsers = (users) => localStorage.setItem('learnpro_users', JSON.stringify(users));
     
     if (confirmEmail !== user.email) {
         showDeleteError(statusElement, 'Email не совпадает');
@@ -295,32 +279,22 @@ function deleteAccount() {
         }, 500);
         return;
     }
-    // Показываем загрузку
+
     confirmBtn.disabled = true;
     confirmBtn.innerHTML = '⏳ Удаляем...';
     
-    // Имитация задержки для подтверждения
     setTimeout(() => {
         try {
-            // Получаем всех пользователей
             const users = getUsers();
-            
-            // Находим индекс текущего пользователя
             const userIndex = users.findIndex(u => u.email === user.email);
             
             if (userIndex !== -1) {
-                // Удаляем пользователя из массива
                 users.splice(userIndex, 1);
-                
-                // Сохраняем обновленный массив
                 saveUsers(users);
-                
-                // Удаляем из sessionStorage
                 sessionStorage.removeItem('currentUser');
                 
                 showDeleteSuccess(statusElement, '✅ Аккаунт успешно удален');
                 
-                // Перенаправляем на главную страницу
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 2000);
@@ -336,7 +310,8 @@ function deleteAccount() {
         }
     }, 1500);
 }
-// Вспомогательные функции для сообщений
+
+// Вспомогательные функции
 function showDeleteError(element, message) {
     element.className = 'status-message status-error';
     element.innerHTML = message;
@@ -347,27 +322,14 @@ function showDeleteSuccess(element, message) {
     element.innerHTML = message;
 }
 
-// Добавьте эти функции управления прокруткой (если их нет)
 function disableBodyScroll() {
     document.body.style.overflow = 'hidden';
-    document.body.dataset.scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${window.scrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
 }
 
 function enableBodyScroll() {
-    const scrollY = document.body.dataset.scrollY;
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
     document.body.style.overflow = '';
-    window.scrollTo(0, parseInt(scrollY || '0'));
 }
 
-// Обновите функцию closeAllModals (добавьте удаление аккаунта)
 function closeAllModals() {
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
@@ -376,27 +338,33 @@ function closeAllModals() {
     enableBodyScroll();
 }
 
-// Добавьте обработчики закрытия для модального окна удаления
+// Выход из системы
+function logout() {
+    sessionStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+}
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработчик клика по фону
+    loadUserData();
+    
+    // Обработчики закрытия модальных окон
     document.addEventListener('click', function(event) {
         if (event.target.classList.contains('modal')) {
             closeAllModals();
         }
     });
     
-    // Обработчик Escape
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeAllModals();
         }
     });
     
-    // Предотвращение закрытия при клике на контент
     document.querySelectorAll('.modal-content').forEach(modalContent => {
         modalContent.addEventListener('click', function(event) {
             event.stopPropagation();
         });
     });
-
 });
