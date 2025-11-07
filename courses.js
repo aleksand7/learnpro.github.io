@@ -206,10 +206,10 @@ function selectPaymentMethod(method) {
     event.target.closest('.payment-method-compact').classList.add('selected');
 }
 
-// Обработка оплаты
+// Обработка оплаты с анимацией
 function processPayment() {
     if (!selectedCourse) {
-        alert('Курс не выбран!');
+        showPaymentError('Курс не выбран!');
         return;
     }
     
@@ -220,28 +220,60 @@ function processPayment() {
     
     // Базовая валидация
     if (!cardNumber || !cardExpiry || !cardCvc || !cardHolder) {
-        alert('Заполните все поля карты');
+        showPaymentError('Заполните все поля карты');
         return;
     }
     
-    // Имитация успешной оплаты
-    alert(`✅ Курс "${selectedCourse.title}" успешно приобретен!`);
+    // Показываем загрузку
+    const payBtn = document.querySelector('.pay-now-btn-compact');
+    const originalText = payBtn.innerHTML;
+    payBtn.classList.add('loading');
+    payBtn.innerHTML = '<span class="btn-text">Обрабатываем оплату...</span>';
     
-    // Добавляем курс пользователю
-    const user = JSON.parse(sessionStorage.getItem('currentUser'));
-    if (user && !user.courses.includes(selectedCourse.id)) {
-        user.courses.push(selectedCourse.id);
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
-        updateUserInStorage(user);
-    }
-    
-    closePaymentModal();
-    
-    // Обновляем каталог
+    // Имитация процесса оплаты
     setTimeout(() => {
-        loadCoursesCatalog();
-        window.location.href = 'dashboard.html';
-    }, 1000);
+        // Успешная оплата
+        payBtn.classList.remove('loading');
+        payBtn.innerHTML = '<span class="btn-text">✅ Оплата прошла успешно!</span>';
+        
+        setTimeout(() => {
+            alert(`🎉 Курс "${selectedCourse.title}" успешно приобретен!`);
+            
+            // Добавляем курс пользователю
+            const user = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (user && !user.courses.includes(selectedCourse.id)) {
+                user.courses.push(selectedCourse.id);
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                updateUserInStorage(user);
+            }
+            
+            closePaymentModal();
+            
+            // Обновляем каталог и перенаправляем
+            setTimeout(() => {
+                loadCoursesCatalog();
+                window.location.href = 'dashboard.html';
+            }, 500);
+            
+        }, 1000);
+        
+    }, 2000);
+}
+
+// Функция показа ошибки оплаты
+function showPaymentError(message) {
+    const payBtn = document.querySelector('.pay-now-btn-compact');
+    payBtn.classList.add('error');
+    payBtn.innerHTML = `<span class="btn-text">❌ ${message}</span>`;
+    
+    setTimeout(() => {
+        payBtn.classList.remove('error');
+        payBtn.innerHTML = `
+            <span class="btn-icon">💳</span>
+            <span class="btn-text">Оплатить</span>
+            <span class="btn-amount">${selectedCourse.price.toLocaleString()}₽</span>
+        `;
+    }, 2000);
 }
 
 // Начать обучение (для уже оплаченных курсов)
@@ -294,3 +326,33 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
+// Плавная фильтрация курсов
+function filterCourses(category) {
+    const cards = document.querySelectorAll('.catalog-course-card');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    // Обновляем активную кнопку фильтра
+    filterBtns.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Плавное скрытие/показ карточек
+    cards.forEach((card, index) => {
+        const cardCategory = card.dataset.category;
+        
+        if (category === 'all' || cardCategory === category) {
+            // Показываем карточку с задержкой для анимации
+            setTimeout(() => {
+                card.style.display = 'block';
+                card.classList.remove('hidden');
+                card.classList.add('visible');
+            }, index * 100);
+        } else {
+            // Скрываем карточку
+            card.classList.remove('visible');
+            card.classList.add('hidden');
+            setTimeout(() => {
+                card.style.display = 'none';
+            }, 300);
+        }
+    });
+}
