@@ -1032,3 +1032,1844 @@ body {
         drop-shadow(0 4px 8px rgba(139, 92, 246, 0.3))
         drop-shadow(0 0 20px rgba(139, 92, 246, 0.2));
 }
+/* ===== СТИЛИ ДЛЯ DASHBOARD ===== */
+
+.dashboard-hero {
+    background: var(--gradient-hero);
+    color: white;
+    padding: 140px 0 80px;
+    margin-top: 70px;
+}
+
+.user-welcome {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-info h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.my-courses-section {
+    padding: 80px 0;
+    background: var(--light);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.view-all-btn {
+    background: var(--gradient);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.view-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Стили для пустого состояния */
+.empty-courses-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.empty-courses-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+}
+
+.empty-courses-state p {
+    color: var(--gray);
+    margin-bottom: 2rem;
+}
+
+.browse-courses-btn {
+    background: var(--gradient);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.browse-courses-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Стили для карточек курсов */
+.user-courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.user-course-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.user-course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.course-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.course-icon {
+    font-size: 3rem;
+}
+
+.course-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.course-status.active {
+    background: var(--success);
+    color: white;
+}
+
+.course-status.not-started {
+    background: var(--gray-light);
+    color: var(--gray);
+}
+
+.course-progress {
+    margin: 1.5rem 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--gray-light);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-stats {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.5rem;
+}
+
+.course-next-lesson {
+    background: var(--gray-light);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.course-last-activity {
+    font-size: 0.8rem;
+    color: var(--gray);
+    text-align: center;
+}
+
+.course-card-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.continue-btn, .start-btn, .course-details-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.continue-btn, .start-btn {
+    background: var(--gradient);
+    color: white;
+}
+
+.course-details-btn {
+    background: var(--gray-light);
+    color: var(--dark);
+}
+
+.continue-btn:hover, .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.course-details-btn:hover {
+    background: var(--gray);
+    color: white;
+}
+
+/* Стили для профиля */
+.profile-section {
+    padding: 80px 0;
+    background: white;
+}
+
+.profile-card {
+    background: var(--gradient-card);
+    padding: 3rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-info {
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.info-item span {
+    color: var(--gray);
+}
+
+/* Стили для кнопки удаления аккаунта */
+.profile-actions {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.delete-account-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.delete-account-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Стили для модального окна удаления */
+.delete-warning {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.warning-icon {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.confirmation-section {
+    margin: 1.5rem 0;
+}
+
+.confirm-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--gray-light);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.confirm-input.error {
+    border-color: var(--error);
+}
+
+.confirm-input.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.cancel-btn {
+    flex: 1;
+    background: var(--gray-light);
+    color: var(--dark);
+    border: none;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.confirm-delete-btn {
+    flex: 1;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.cancel-btn:hover {
+    background: var(--gray);
+    color: white;
+}
+
+.confirm-delete-btn:disabled {
+    background: var(--gray-light);
+    color: var(--gray);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.confirm-delete-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+/* ===== СТИЛИ ДЛЯ КАРТОЧЕК КУРСОВ НА ГЛАВНОЙ ===== */
+
+.courses {
+    padding: 120px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+    position: relative;
+}
+
+.courses::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+}
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.course-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: var(--border-radius-xl);
+    box-shadow: 
+        var(--shadow-lg),
+        0 0 0 1px rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.course-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.course-card:hover::before {
+    transform: scaleX(1);
+}
+
+.course-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 
+        var(--shadow-xl),
+        0 20px 40px rgba(139, 92, 246, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.course-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 4px 8px rgba(139, 92, 246, 0.2));
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+.course-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--dark);
+    letter-spacing: -0.01em;
+    position: relative;
+    display: inline-block;
+}
+
+.course-card h3::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gradient);
+    transition: width 0.4s ease;
+}
+
+.course-card:hover h3::after {
+    width: 100%;
+}
+
+.course-card > p {
+    color: var(--gray);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+.course-features {
+    list-style: none;
+    margin: 2rem 0;
+}
+
+.course-features li {
+    padding: 0.75rem 0;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    transition: var(--transition);
+}
+
+.course-features li:hover {
+    color: var(--dark);
+    transform: translateX(5px);
+}
+
+.course-features li:last-child {
+    border-bottom: none;
+}
+
+.course-features li::before {
+    content: '✓';
+    color: var(--success);
+    font-weight: bold;
+    background: rgba(16, 185, 129, 0.1);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 2rem 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.price::before {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--gradient);
+    opacity: 0.3;
+}
+
+.course-btn {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 1.2rem 2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+}
+
+.course-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.course-btn:hover::before {
+    left: 100%;
+}
+
+.course-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Бейдж для популярных курсов */
+.course-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 3;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Анимация появления карточек */
+.course-card {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: courseSlideUp 0.8s ease forwards;
+}
+
+.course-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.course-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.course-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes courseSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Декоративные элементы */
+.course-decoration {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: var(--gradient);
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+}
+
+.course-decoration:nth-child(1) {
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+}
+
+.course-decoration:nth-child(2) {
+    bottom: 20%;
+    right: 10%;
+    animation-delay: 2s;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .courses {
+        padding: 80px 0;
+    }
+    
+    .courses-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .course-card {
+        padding: 2rem;
+    }
+    
+    .course-icon {
+        font-size: 3.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .course-card {
+        padding: 1.5rem;
+    }
+    
+    .course-icon {
+        font-size: 3rem;
+    }
+    
+    .course-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .price {
+        font-size: 2rem;
+    }
+}
+/* ===== СТИЛИ ДЛЯ СТРАНИЦЫ ВСЕХ КУРСОВ ===== */
+
+.courses-page {
+    padding: 140px 0 80px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+    min-height: 100vh;
+    margin-top: 70px;
+}
+
+.courses-page .hero-content {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.courses-page .hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.courses-page .hero-content p {
+    font-size: 1.25rem;
+    color: var(--gray);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Фильтры курсов */
+.courses-filter {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(139, 92, 246, 0.1);
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: var(--dark);
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.filter-btn:hover::before {
+    left: 0;
+}
+
+.filter-btn:hover {
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.filter-btn.active {
+    background: var(--gradient);
+    color: white;
+    border-color: transparent;
+    box-shadow: var(--shadow-md);
+}
+
+/* Каталог курсов */
+.course-catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 2.5rem;
+    perspective: 1000px;
+}
+
+.catalog-course-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: var(--border-radius-xl);
+    box-shadow: 
+        var(--shadow-lg),
+        0 0 0 1px rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: catalogSlideUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+@keyframes catalogSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.catalog-course-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.catalog-course-card:hover::before {
+    transform: scaleX(1);
+}
+
+.catalog-course-card:hover {
+    transform: translateY(-10px) rotateX(5deg);
+    box-shadow: 
+        var(--shadow-xl),
+        0 25px 50px rgba(139, 92, 246, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+/* Бейдж курса */
+.course-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    z-index: 3;
+    animation: badgePulse 2s infinite;
+    box-shadow: var(--shadow-md);
+}
+
+@keyframes badgePulse {
+    0%, 100% { 
+        transform: scale(1) rotate(0deg); 
+    }
+    50% { 
+        transform: scale(1.05) rotate(2deg); 
+    }
+}
+
+/* Иконка курса */
+.catalog-course-card .course-icon {
+    font-size: 4.5rem;
+    margin-bottom: 1.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 6px 12px rgba(139, 92, 246, 0.3));
+    display: inline-block;
+    animation: iconFloat 4s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Уровень сложности */
+.course-level {
+    display: inline-block;
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.catalog-course-card h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--dark);
+    line-height: 1.2;
+}
+
+.catalog-course-card > p {
+    color: var(--gray);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+/* Длительность курса */
+.course-duration {
+    background: rgba(6, 182, 212, 0.1);
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--border-radius);
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--secondary);
+}
+
+.course-duration span {
+    color: var(--secondary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Список особенностей */
+.course-features-list {
+    list-style: none;
+    margin: 2rem 0;
+}
+
+.course-features-list li {
+    padding: 0.8rem 0;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.course-features-list li::before {
+    content: '✨';
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.course-features-list li:hover {
+    color: var(--dark);
+    transform: translateX(8px);
+    border-bottom-color: var(--primary-light);
+}
+
+.course-features-list li:last-child {
+    border-bottom: none;
+}
+
+/* Секция цены */
+.course-price-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px dashed rgba(139, 92, 246, 0.2);
+}
+
+.course-price {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.course-old-price {
+    font-size: 1.5rem;
+    color: var(--gray);
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+    font-weight: 500;
+}
+
+/* Кнопка подписки */
+.subscribe-btn {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 1.2rem 2.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    font-size: 1rem;
+    box-shadow: var(--shadow-md);
+}
+
+.subscribe-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+}
+
+.subscribe-btn:hover::before {
+    left: 100%;
+}
+
+.subscribe-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-xl);
+}
+
+.subscribe-btn.enrolled {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.subscribe-btn.enrolled:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+/* Анимация появления карточек с задержкой */
+.catalog-course-card:nth-child(1) { animation-delay: 0.1s; }
+.catalog-course-card:nth-child(2) { animation-delay: 0.2s; }
+.catalog-course-card:nth-child(3) { animation-delay: 0.3s; }
+.catalog-course-card:nth-child(4) { animation-delay: 0.4s; }
+.catalog-course-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Декоративные элементы для страницы */
+.courses-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .course-catalog {
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .courses-page {
+        padding: 120px 0 60px;
+    }
+    
+    .courses-page .hero-content h1 {
+        font-size: 2.8rem;
+    }
+    
+    .course-catalog {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .catalog-course-card {
+        padding: 2rem;
+    }
+    
+    .courses-filter {
+        gap: 0.5rem;
+    }
+    
+    .filter-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .course-price-section {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .catalog-course-card {
+        padding: 1.5rem;
+    }
+    
+    .courses-page .hero-content h1 {
+        font-size: 2.2rem;
+    }
+    
+    .courses-page .hero-content p {
+        font-size: 1.1rem;
+    }
+    
+    .catalog-course-card .course-icon {
+        font-size: 3.5rem;
+    }
+    
+    .course-price {
+        font-size: 2.2rem;
+    }
+    
+    .subscribe-btn {
+        padding: 1rem 2rem;
+        width: 100%;
+    }
+}
+
+/* Эффект смены фильтра */
+.catalog-course-card {
+    transition: all 0.5s ease;
+}
+
+.catalog-course-card.hidden {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+.catalog-course-card.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+/* ===== СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА ОПЛАТЫ ===== */
+
+.payment-modal .modal-content {
+    max-width: 500px;
+    padding: 0;
+    border-radius: var(--border-radius-xl);
+    overflow: hidden;
+}
+
+.compact-payment {
+    background: white;
+}
+
+/* Хедер оплаты */
+.payment-header {
+    background: var(--gradient);
+    color: white;
+    padding: 2.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+}
+
+.course-icon-small {
+    font-size: 3rem;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    position: relative;
+    z-index: 2;
+}
+
+.payment-course-info {
+    position: relative;
+    z-index: 2;
+}
+
+.payment-course-info h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.payment-price {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Форма оплаты */
+.compact-payment-form {
+    padding: 2.5rem 2rem;
+}
+
+/* Методы оплаты */
+.payment-methods-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.payment-method-compact {
+    background: var(--gray-light);
+    border: 2px solid transparent;
+    padding: 1.5rem 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-method-compact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient);
+    transition: left 0.3s ease;
+    z-index: 1;
+}
+
+.payment-method-compact.selected::before {
+    left: 0;
+}
+
+.payment-method-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.payment-method-compact.selected {
+    border-color: var(--primary);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.method-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.method-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 2;
+}
+
+.payment-method-compact.selected .method-name {
+    color: white;
+}
+
+/* Форма карты */
+.card-form {
+    background: rgba(248, 250, 252, 0.8);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.form-group-compact {
+    margin-bottom: 1.5rem;
+}
+
+.form-group-compact label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+.form-group-compact input {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    font-family: inherit;
+}
+
+.form-group-compact input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-group-compact input::placeholder {
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+/* Строка с двумя полями */
+.form-row-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Сводка заказа */
+.order-summary {
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.order-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    font-size: 0.95rem;
+}
+
+.order-line:last-child {
+    border-bottom: none;
+}
+
+.order-line span:first-child {
+    color: var(--gray);
+    font-weight: 500;
+}
+
+.order-line span:last-child {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0 0;
+    margin-top: 1rem;
+    border-top: 2px solid rgba(139, 92, 246, 0.2);
+    font-size: 1.1rem;
+}
+
+.order-total span:first-child {
+    color: var(--dark);
+    font-weight: 700;
+}
+
+.order-total span:last-child {
+    font-weight: 800;
+    color: var(--primary);
+    font-size: 1.3rem;
+}
+
+/* Кнопка оплаты */
+.pay-now-btn-compact {
+    width: 100%;
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 1.5rem 2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.pay-now-btn-compact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+}
+
+.pay-now-btn-compact:hover::before {
+    left: 100%;
+}
+
+.pay-now-btn-compact:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+}
+
+.btn-icon {
+    font-size: 1.3rem;
+}
+
+.btn-text {
+    flex: 1;
+    text-align: center;
+    font-weight: 700;
+}
+
+.btn-amount {
+    background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 800;
+    backdrop-filter: blur(10px);
+}
+
+/* Безопасность оплаты */
+.payment-security {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.security-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--success);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.lock-icon {
+    font-size: 1.1rem;
+    animation: lockPulse 2s infinite;
+}
+
+@keyframes lockPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Анимации для модального окна */
+.payment-modal .modal-content {
+    animation: paymentSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes paymentSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .payment-modal .modal-content {
+        margin: 5% auto;
+        width: 95%;
+    }
+    
+    .payment-header {
+        padding: 2rem 1.5rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .compact-payment-form {
+        padding: 2rem 1.5rem;
+    }
+    
+    .payment-methods-compact {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row-compact {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    
+    .pay-now-btn-compact {
+        padding: 1.2rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .payment-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .compact-payment-form {
+        padding: 1.5rem 1rem;
+    }
+    
+    .card-form {
+        padding: 1.5rem;
+    }
+    
+    .payment-price {
+        font-size: 1.8rem;
+    }
+    
+    .pay-now-btn-compact {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .btn-text {
+        order: -1;
+    }
+}
+
+/* Стили для выбранного метода оплаты */
+.payment-method-compact.selected .method-icon,
+.payment-method-compact.selected .method-name {
+    position: relative;
+    z-index: 2;
+    color: white;
+}
+
+/* Эффект загрузки при оплате */
+.pay-now-btn-compact.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.pay-now-btn-compact.loading::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+/* Валидация полей */
+.form-group-compact input.error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-group-compact input.valid {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+/* ===== КОМПАКТНЫЕ СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА ===== */
+
+.payment-modal .modal-content {
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 2% auto;
+}
+
+.compact-payment {
+    background: white;
+}
+
+/* Компактный хедер */
+.payment-header {
+    background: var(--gradient);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.course-icon-small {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.payment-course-info h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: white;
+}
+
+.payment-price {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: white;
+}
+
+/* Компактная форма */
+.compact-payment-form {
+    padding: 1.5rem;
+}
+
+/* Методы оплаты в строку */
+.payment-methods-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-method-compact {
+    background: var(--gray-light);
+    border: 2px solid transparent;
+    padding: 1rem 0.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.payment-method-compact.selected {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.method-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.method-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Компактная форма карты */
+.card-form {
+    background: rgba(248, 250, 252, 0.8);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.form-group-compact {
+    margin-bottom: 1rem;
+}
+
+.form-group-compact label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.8rem;
+}
+
+.form-group-compact input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.form-group-compact input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+}
+
+.form-row-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+/* Компактная сводка заказа */
+.order-summary-compact {
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.order-line-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+}
+
+.order-line-compact:not(:last-child) {
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.order-line-compact span:first-child {
+    color: var(--gray);
+}
+
+.order-line-compact span:last-child {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.order-total-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+    border-top: 2px solid rgba(139, 92, 246, 0.2);
+    font-weight: 700;
+}
+
+.order-total-compact span:last-child {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+/* Компактная кнопка оплаты */
+.pay-now-btn-compact {
+    width: 100%;
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.pay-now-btn-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-text {
+    font-weight: 700;
+}
+
+.btn-amount {
+    background: rgba(255,255,255,0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 0.9rem;
+}
+
+/* Компактная безопасность */
+.payment-security-compact {
+    text-align: center;
+    color: var(--success);
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.lock-icon {
+    font-size: 0.9rem;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 480px) {
+    .payment-modal .modal-content {
+        margin: 1% auto;
+        width: 98%;
+        max-width: 380px;
+    }
+    
+    .payment-header {
+        padding: 1.2rem;
+    }
+    
+    .compact-payment-form {
+        padding: 1.2rem;
+    }
+    
+    .card-form {
+        padding: 1.2rem;
+    }
+    
+    .payment-price {
+        font-size: 1.5rem;
+    }
+    
+    .course-icon-small {
+        font-size: 2rem;
+    }
+    
+    .pay-now-btn-compact {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Скрытие лишних элементов при маленьком экране */
+@media (max-height: 700px) {
+    .payment-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .compact-payment-form {
+        padding: 1rem 1.5rem;
+    }
+    
+    .card-form {
+        padding: 1rem;
+    }
+    
+    .form-group-compact {
+        margin-bottom: 0.8rem;
+    }
+    
+    .form-group-compact input {
+        padding: 0.7rem 0.9rem;
+    }
+}
