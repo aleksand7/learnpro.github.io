@@ -2873,3 +2873,18 @@ body {
         padding: 0.7rem 0.9rem;
     }
 }
+/* Исправление для отображения курсов */
+.courses-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important;
+    gap: 2.5rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.course-card {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
