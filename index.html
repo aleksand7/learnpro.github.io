@@ -241,4 +241,154 @@
 
     <script src="script.js"></script>
 </body>
+    <!-- Добавьте этот код перед закрывающим тегом </body> -->
+<!-- Кнопка "Наверх" -->
+<button id="scrollToTop" class="scroll-to-top-btn" title="Наверх">
+    ↑
+</button>
+
+<script>
+// ==================== КНОПКА "НАВЕРХ" ====================
+
+// Создаем кнопку через JavaScript
+function createScrollToTopButton() {
+    const scrollBtn = document.getElementById('scrollToTop');
+    
+    // Показываем/скрываем кнопку при скролле
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            scrollBtn.style.display = 'block';
+            setTimeout(() => scrollBtn.style.opacity = '1', 10);
+        } else {
+            scrollBtn.style.opacity = '0';
+            setTimeout(() => scrollBtn.style.display = 'none', 300);
+        }
+    });
+    
+    // Плавный скролл наверх
+    scrollBtn.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
+
+// ==================== ПЕРЕЗАГРУЗКА С СОХРАНЕНИЕМ ПОЗИЦИИ ====================
+
+// Сохраняем позицию скролла перед перезагрузкой
+function saveScrollPosition() {
+    sessionStorage.setItem('scrollPosition', window.pageYOffset);
+    sessionStorage.setItem('currentPage', window.location.pathname);
+}
+
+// Восстанавливаем позицию скролла после перезагрузки
+function restoreScrollPosition() {
+    const savedPosition = sessionStorage.getItem('scrollPosition');
+    const savedPage = sessionStorage.getItem('currentPage');
+    
+    if (savedPosition && savedPage === window.location.pathname) {
+        window.scrollTo(0, parseInt(savedPosition));
+        // Очищаем сохраненную позицию после восстановления
+        sessionStorage.removeItem('scrollPosition');
+        sessionStorage.removeItem('currentPage');
+    }
+}
+
+// Обработчик для логотипа
+function setupLogoReload() {
+    const logos = document.querySelectorAll('.logo h2, .logo');
+    
+    logos.forEach(logo => {
+        logo.style.cursor = 'pointer';
+        logo.addEventListener('click', function(e) {
+            e.preventDefault();
+            saveScrollPosition();
+            window.location.reload();
+        });
+    });
+}
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    createScrollToTopButton();
+    setupLogoReload();
+    restoreScrollPosition();
+    
+    // Сохраняем позицию при клике на внутренние ссылки
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            saveScrollPosition();
+        });
+    });
+});
+
+// Сохраняем позицию перед перезагрузкой страницы
+window.addEventListener('beforeunload', saveScrollPosition);
+</script>
+
+<style>
+/* Стили для кнопки "Наверх" */
+.scroll-to-top-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: var(--gradient);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    display: none;
+    z-index: 1000;
+}
+
+.scroll-to-top-btn:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: var(--shadow-xl);
+}
+
+.scroll-to-top-btn:active {
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Анимация появления */
+.scroll-to-top-btn.show {
+    opacity: 1;
+    display: block;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .scroll-to-top-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+}
+
+/* Дополнительные стили для логотипа */
+.logo h2 {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.logo h2:hover {
+    transform: scale(1.05);
+}
+
+.logo h2:active {
+    transform: scale(0.95);
+}
+</style>
 </html>
+
