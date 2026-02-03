@@ -6,12 +6,7 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Функция генерации логина
-function generateLogin(firstName, lastName) {
-    const namePart = firstName.toLowerCase().slice(0, 3);
-    const randomNum = Math.floor(Math.random() * 1000);
-    return `${namePart}${lastName.toLowerCase().slice(0, 2)}${randomNum}`;
-}
+
 
 // Функция генерации пароля
 function generatePassword() {
@@ -206,7 +201,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     
     try {
         // Генерируем логин и пароль
-        const login = generateLogin(firstName, lastName);
+        const login = email;
         const password = generatePassword();
         
         // Создаем объект пользователя
@@ -352,6 +347,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
