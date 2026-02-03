@@ -6,6 +6,12 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+// Функция генерации логина
+function generateLogin(firstName, lastName) {
+    const namePart = firstName.toLowerCase().slice(0, 3);
+    const randomNum = Math.floor(Math.random() * 1000);
+    return `${namePart}${lastName.toLowerCase().slice(0, 2)}${randomNum}`;
+}
 
 // Функция генерации пароля
 function generatePassword() {
@@ -68,6 +74,7 @@ async function sendCredentialsEmail(userData) {
             body: JSON.stringify({
                 userEmail: userData.email,
                 userName: `${userData.firstName} ${userData.lastName}`,
+                userLogin: userData.login,
                 userPassword: userData.password
             })
         });
@@ -345,6 +352,7 @@ function logout() {
     sessionStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+
 
 
 
