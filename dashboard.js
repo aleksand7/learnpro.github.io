@@ -213,9 +213,16 @@ function createCourseCard(course) {
     `;
 }
 
-// Функции для кнопок курсов
-function continueCourse(courseId) {
-    alert(`Продолжаем курс "${courseId}"! 🎯`);
+// ГЛОБАЛЬНАЯ функция для продолжения курса
+window.continueCourse = function(courseId) {
+    // Перенаправляем на страницу курса с ID
+    window.location.href = `course-view.html?id=${courseId}`;
+}
+
+// ГЛОБАЛЬНАЯ функция для начала курса
+window.startCourse = function(courseId) {
+    // Тоже перенаправляем на страницу курса
+    window.location.href = `course-view.html?id=${courseId}`;
 }
 
 function startCourse(courseId) {
@@ -368,3 +375,312 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+// ==================== ФУНКЦИЯ ДЛЯ ПОДРОБНОЙ ИНФОРМАЦИИ О КУРСЕ ====================
+window.showCourseDetails = function(courseId) {
+    // Получаем данные о курсе
+    const course = getUserCourseData([courseId])[0];
+    
+    // Данные для разных курсов (можно расширить)
+    const courseDetails = {
+        'fullstack': {
+            fullDescription: 'Полный курс по веб-разработке. Вы научитесь создавать современные веб-приложения с нуля, используя JavaScript, React, Node.js и MongoDB.',
+            skills: [
+                'JavaScript (ES6+)',
+                'React и Redux',
+                'Node.js и Express',
+                'MongoDB и PostgreSQL',
+                'Docker и DevOps',
+                'Git и GitHub'
+            ],
+            duration: '6 месяцев',
+            lessons: 120,
+            projects: 6,
+            price: '25 000₽',
+            teacher: 'Алексей Иванов (Yandex)'
+        },
+        'mobile': {
+            fullDescription: 'Научитесь создавать мобильные приложения для iOS и Android с помощью React Native. Курс включает публикацию приложений в AppStore и Google Play.',
+            skills: [
+                'React Native',
+                'Нативные модули',
+                'Работа с API',
+                'Публикация в сторах',
+                'UI/UX для мобильных',
+                'Firebase'
+            ],
+            duration: '5 месяцев',
+            lessons: 100,
+            projects: 4,
+            price: '22 000₽',
+            teacher: 'Мария Петрова (Tinkoff)'
+        },
+        'design': {
+            fullDescription: 'Освойте профессию дизайнера интерфейсов. Научитесь создавать удобные и красивые дизайны для веба и мобильных приложений.',
+            skills: [
+                'Figma',
+                'Adobe XD',
+                'Прототипирование',
+                'Дизайн-системы',
+                'User Research',
+                'Анимация'
+            ],
+            duration: '4 месяца',
+            lessons: 80,
+            projects: 5,
+            price: '18 000₽',
+            teacher: 'Екатерина Смирнова (Wildberries)'
+        },
+        'python': {
+            fullDescription: 'Станьте Data Scientist с нуля. Изучите Python, библиотеки для анализа данных и машинное обучение.',
+            skills: [
+                'Python',
+                'Pandas и NumPy',
+                'Машинное обучение',
+                'TensorFlow',
+                'Визуализация данных',
+                'SQL'
+            ],
+            duration: '7 месяцев',
+            lessons: 140,
+            projects: 3,
+            price: '30 000₽',
+            teacher: 'Дмитрий Соколов (СберТех)'
+        },
+        'java': {
+            fullDescription: 'Освойте Java для создания корпоративных приложений. Spring Framework, Hibernate, микросервисы.',
+            skills: [
+                'Java Core',
+                'Spring Framework',
+                'Hibernate',
+                'Микросервисы',
+                'Базы данных',
+                'Тестирование'
+            ],
+            duration: '6 месяцев',
+            lessons: 110,
+            projects: 4,
+            price: '28 000₽',
+            teacher: 'Сергей Волков (Тинькофф)'
+        }
+    };
+    
+    const details = courseDetails[courseId] || {
+        fullDescription: course.description,
+        skills: ['JavaScript', 'React', 'Node.js'],
+        duration: '6 месяцев',
+        lessons: 120,
+        projects: 4,
+        price: '25 000₽',
+        teacher: 'Алексей Иванов'
+    };
+    
+    // Создаем модальное окно
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 32px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+            animation: modalSlideIn 0.4s ease;
+        ">
+            <!-- Хедер с градиентом -->
+            <div style="
+                background: var(--gradient);
+                padding: 2rem;
+                border-radius: 32px 32px 0 0;
+                color: white;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            ">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    <div style="font-size: 3.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));">
+                        ${course.icon}
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.8rem; margin-bottom: 0.3rem;">${course.title}</h2>
+                        <p style="opacity: 0.9;">${details.duration} • ${details.lessons} уроков</p>
+                    </div>
+                </div>
+                <button onclick="this.closest('div[style*=\\'fixed\\']').remove()" style="
+                    position: absolute;
+                    right: 20px;
+                    top: 20px;
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                    font-size: 2rem;
+                    cursor: pointer;
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                   onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
+            </div>
+            
+            <div style="padding: 2rem;">
+                <!-- Прогресс (если курс начат) -->
+                ${course.progress > 0 ? `
+                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; border-left: 4px solid #0ea5e9;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                            <span style="font-weight: 600;">Ваш прогресс:</span>
+                            <span style="color: #0ea5e9; font-weight: 700;">${course.progress}%</span>
+                        </div>
+                        <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${course.progress}%; height: 100%; background: var(--gradient); border-radius: 4px;"></div>
+                        </div>
+                        <div style="margin-top: 0.8rem; color: #64748b;">
+                            Пройдено ${course.lessonsCompleted} из ${course.lessonsTotal} уроков
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <!-- Описание курса -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📖</span> О курсе
+                    </h3>
+                    <p style="color: var(--gray); line-height: 1.7;">${details.fullDescription}</p>
+                </div>
+                
+                <!-- Чему научитесь -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🎯</span> Чему вы научитесь
+                    </h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+                        ${details.skills.map(skill => `
+                            <div style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 12px;">
+                                <span style="color: var(--success);">✓</span>
+                                <span>${skill}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <!-- Детали курса -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">⏱️</div>
+                        <div style="font-weight: 600;">${details.duration}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">Длительность</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">📚</div>
+                        <div style="font-weight: 600;">${details.lessons} уроков</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">Всего</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">🎯</div>
+                        <div style="font-weight: 600;">${details.projects} проектов</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">В портфолио</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">💰</div>
+                        <div style="font-weight: 600; color: var(--primary);">${details.price}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">Стоимость</div>
+                    </div>
+                </div>
+                
+                <!-- Преподаватель -->
+                <div style="background: linear-gradient(135deg, #f0f9ff, #ffffff); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>👨‍🏫</span> Преподаватель
+                    </h3>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 50px; height: 50px; background: var(--gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
+                            ${details.teacher.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div>
+                            <div style="font-weight: 700;">${details.teacher}</div>
+                            <div style="font-size: 0.9rem; color: var(--gray);">Ведущий разработчик</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div style="display: flex; gap: 1rem;">
+                    ${course.progress > 0 ? `
+                        <button onclick="window.continueCourse('${courseId}')" style="
+                            flex: 1;
+                            background: var(--gradient);
+                            color: white;
+                            border: none;
+                            padding: 1.2rem;
+                            border-radius: 16px;
+                            font-weight: 700;
+                            font-size: 1rem;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 0.5rem;
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'" 
+                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                            🎯 Продолжить обучение
+                        </button>
+                    ` : `
+                        <button onclick="window.startCourse('${courseId}')" style="
+                            flex: 1;
+                            background: var(--gradient);
+                            color: white;
+                            border: none;
+                            padding: 1.2rem;
+                            border-radius: 16px;
+                            font-weight: 700;
+                            font-size: 1rem;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 0.5rem;
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'" 
+                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                            🚀 Начать обучение
+                        </button>
+                    `}
+                    <button onclick="this.closest('div[style*=\\'fixed\\']').remove()" style="
+                        padding: 0 2rem;
+                        background: #f1f5f9;
+                        color: var(--dark);
+                        border: none;
+                        border-radius: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                    " onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                        ✕ Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
