@@ -302,5 +302,145 @@
     </section>
 
     <script src="course-view.js"></script>
-</body>
+    <!-- Quiz Section -->
+<div class="quiz-section" id="quizSection" style="display: none;">
+    <div class="quiz-header">
+        <h2>📝 Итоговый тест</h2>
+        <p>Проверьте свои знания перед получением сертификата</p>
+    </div>
+    
+    <div class="quiz-progress">
+        <div class="quiz-progress-bar" id="quizProgressBar"></div>
+    </div>
+    
+    <div class="quiz-question" id="quizQuestion">
+        <!-- Вопросы загружаются через JavaScript -->
+    </div>
+    
+    <div class="quiz-actions">
+        <button class="quiz-prev-btn" id="quizPrevBtn" onclick="prevQuestion()">← Назад</button>
+        <span class="quiz-counter" id="quizCounter">1/5</span>
+        <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuestion()">Далее →</button>
+        <button class="quiz-submit-btn" id="quizSubmitBtn" onclick="submitQuiz()" style="display: none;">📤 Отправить</button>
+    </div>
+    
+    <div class="quiz-result" id="quizResult"></div>
+</div>
+
+<!-- Certificate Modal -->
+<div id="certificateModal" class="modal" style="display: none;">
+    <div class="modal-content certificate-modal">
+        <span class="close" onclick="closeCertificateModal()">&times;</span>
+        <div class="certificate">
+            <div class="certificate-header">
+                <div class="certificate-icon">🎓</div>
+                <h2>Сертификат об окончании</h2>
+            </div>
+            <div class="certificate-body">
+                <p class="certificate-text">Настоящий сертификат подтверждает, что</p>
+                <h3 class="student-name" id="certificateStudentName">Иван Иванов</h3>
+                <p class="certificate-text">успешно завершил(а) курс</p>
+                <h2 class="course-name" id="certificateCourseName">Fullstack-разработка</h2>
+                <div class="certificate-date">
+                    <span>Дата: <span id="certificateDate">15.02.2026</span></span>
+                    <span>№ <span id="certificateNumber">LRN-2026-0001</span></span>
+                </div>
+            </div>
+            <div class="certificate-footer">
+                <div class="signature">
+                    <p>____________________</p>
+                    <p>Директор LearnPro</p>
+                </div>
+                <div class="certificate-seal">✅</div>
+            </div>
+        </div>
+        <div class="certificate-actions">
+            <button class="download-certificate-btn" onclick="downloadCertificate()">📥 Скачать сертификат</button>
+            <button class="share-certificate-btn" onclick="shareCertificate()">📤 Поделиться</button>
+        </div>
+    </div>
+</div>
+<!-- Certificate Modal -->
+<div id="certificateModal" class="modal" style="display: none;">
+    <div class="modal-content certificate-modal">
+        <span class="close" onclick="closeCertificateModal()">&times;</span>
+        <div class="certificate">
+            <div class="certificate-header">
+                <div class="certificate-icon">🎓</div>
+                <h2>Сертификат об окончании</h2>
+            </div>
+            <div class="certificate-body">
+                <p class="certificate-text">Настоящий сертификат подтверждает, что</p>
+                <h3 class="student-name" id="certificateStudentName">Иван Иванов</h3>
+                <p class="certificate-text">успешно завершил(а) курс</p>
+                <h2 class="course-name" id="certificateCourseName">Fullstack-разработка</h2>
+                <div class="certificate-date">
+                    <span>Дата: <span id="certificateDate">15.02.2026</span></span>
+                    <span>№ <span id="certificateNumber">LRN-2026-0001</span></span>
+                </div>
+            </div>
+            <div class="certificate-footer">
+                <div class="signature">
+                    <p>____________________</p>
+                    <p>Директор LearnPro</p>
+                </div>
+                <div class="certificate-seal">✅</div>
+            </div>
+        </div>
+        <div class="certificate-actions">
+            <button class="download-certificate-btn" onclick="downloadCertificate()">📥 Скачать сертификат</button>
+            <button class="share-certificate-btn" onclick="shareCertificate()">📤 Поделиться</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes certificateZoom {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
+<!-- Подключаем jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- Подключаем html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </html>
