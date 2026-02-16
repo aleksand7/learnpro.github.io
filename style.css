@@ -2888,3 +2888,453 @@ body {
     transform: none !important;
 }
 
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+/* ===== QUIZ STYLES ===== */
+.quiz-section {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: var(--shadow-md);
+}
+
+.quiz-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.quiz-header h2 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.quiz-progress {
+    height: 8px;
+    background: var(--gray-light);
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.quiz-progress-bar {
+    height: 100%;
+    background: var(--gradient);
+    transition: width 0.3s ease;
+}
+
+.quiz-question {
+    margin-bottom: 2rem;
+}
+
+.quiz-question h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark);
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.quiz-option {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--gray-light);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.quiz-option:hover {
+    background: #e2e8f0;
+    transform: translateX(5px);
+}
+
+.quiz-option.selected {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: var(--primary);
+}
+
+.quiz-option input[type="radio"] {
+    margin-right: 1rem;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
+}
+
+.quiz-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 0;
+}
+
+.quiz-prev-btn, .quiz-next-btn, .quiz-submit-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quiz-prev-btn, .quiz-next-btn {
+    background: var(--gray-light);
+    color: var(--dark);
+}
+
+.quiz-prev-btn:hover, .quiz-next-btn:hover {
+    background: #e2e8f0;
+}
+
+.quiz-submit-btn {
+    background: var(--gradient);
+    color: white;
+}
+
+.quiz-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.quiz-counter {
+    font-weight: 600;
+    color: var(--gray);
+}
+
+.quiz-result {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: none;
+}
+
+.quiz-result.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    display: block;
+}
+
+.quiz-result.fail {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    display: block;
+}
+
+/* ===== ПОЛНОЭКРАННЫЙ СЕРТИФИКАТ ===== */
+.certificate-modal .modal-content {
+    max-width: 900px;
+    width: 95%;
+    padding: 0;
+    border-radius: 32px;
+    overflow: hidden;
+    animation: certificateZoom 0.5s ease;
+}
+
+@keyframes certificateZoom {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.certificate-full {
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+    padding: 3rem;
+    border: 4px double var(--primary);
+    position: relative;
+    box-shadow: var(--shadow-xl);
+}
+
+.certificate-full::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border: 2px dashed var(--primary-light);
+    border-radius: 24px;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.certificate-full::after {
+    content: '★';
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    font-size: 4rem;
+    color: var(--primary);
+    opacity: 0.1;
+    transform: rotate(15deg);
+}
+
+.certificate-header-full {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.certificate-icon-full {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 10px 15px rgba(139, 92, 246, 0.3));
+    animation: float 3s ease-in-out infinite;
+}
+
+.certificate-header-full h2 {
+    font-size: 2.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+}
+
+.certificate-body-full {
+    text-align: center;
+    margin: 3rem 0;
+    position: relative;
+    z-index: 2;
+}
+
+.certificate-label {
+    font-size: 1.2rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.student-name-full {
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin: 1rem 0;
+    font-weight: 800;
+    border-bottom: 3px solid var(--primary-light);
+    border-top: 3px solid var(--primary-light);
+    padding: 1rem 0;
+    display: inline-block;
+    text-shadow: 0 5px 15px rgba(139, 92, 246, 0.2);
+}
+
+.certificate-text {
+    font-size: 1.3rem;
+    color: var(--dark);
+    margin: 1.5rem 0;
+    font-style: italic;
+}
+
+.course-name-full {
+    font-size: 2.8rem;
+    color: var(--dark);
+    margin: 1rem 0;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding: 0.5rem 2rem;
+    display: inline-block;
+    border: 2px solid var(--primary-light);
+    border-radius: 60px;
+}
+
+.certificate-date-full {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin: 2rem 0;
+    font-size: 1.2rem;
+    color: var(--gray);
+}
+
+.certificate-date-full span {
+    background: #f8fafc;
+    padding: 0.5rem 1.5rem;
+    border-radius: 30px;
+    border: 1px solid var(--primary-light);
+}
+
+.certificate-date-full strong {
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+.certificate-footer-full {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--gray-light);
+}
+
+.signature-full {
+    text-align: center;
+    flex: 1;
+}
+
+.signature-line {
+    width: 250px;
+    height: 2px;
+    background: var(--primary);
+    margin: 0 auto 0.5rem;
+}
+
+.signature-full p:first-of-type {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 0.3rem;
+}
+
+.signature-full p:last-of-type {
+    color: var(--gray);
+    font-size: 1rem;
+}
+
+.certificate-seal-full {
+    text-align: center;
+    flex: 1;
+}
+
+.seal-circle {
+    width: 100px;
+    height: 100px;
+    background: var(--gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    font-size: 2.5rem;
+    border: 3px solid white;
+    box-shadow: var(--shadow-lg);
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.seal-text {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.certificate-actions-full {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 2rem;
+    background: #f8fafc;
+}
+
+.download-pdf-btn {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 1.2rem 2.5rem;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-md);
+}
+
+.download-pdf-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+}
+
+.share-certificate-btn {
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    padding: 1.2rem 2.5rem;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s;
+}
+
+.share-certificate-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+    .certificate-full {
+        padding: 1.5rem;
+    }
+    
+    .student-name-full {
+        font-size: 2rem;
+    }
+    
+    .course-name-full {
+        font-size: 1.8rem;
+    }
+    
+    .certificate-date-full {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .certificate-footer-full {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .certificate-actions-full {
+        flex-direction: column;
+    }
+}
