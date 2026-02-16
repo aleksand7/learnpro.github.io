@@ -3504,16 +3504,6 @@ window.downloadCertificatePDF = function(courseId) {
     });
 
     
-    // Создаем Blob и скачиваем
-    const blob = new Blob([certificateHTML], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `certificate_${course.title.replace(/[^a-zа-я0-9]/gi, '_')}.html`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
     
     // Показываем уведомление
     showNotification('✅ PDF сертификат скачан!');
