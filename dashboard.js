@@ -12,6 +12,11 @@ function checkAuth() {
     return user;
 }
 
+// Получение текущего пользователя
+function getCurrentUser() {
+    return JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+}
+
 // Функции для работы с пользователями
 function getUsers() {
     return JSON.parse(localStorage.getItem('learnpro_users')) || [];
@@ -30,6 +35,23 @@ function updateUserInStorage(updatedUser) {
         users[userIndex] = updatedUser;
         saveUsers(users);
     }
+}
+
+// ==================== ФУНКЦИИ ДЛЯ РАБОТЫ С ПРОГРЕССОМ ====================
+
+// Получение ключа для хранения прогресса с привязкой к пользователю
+function getProgressKey(courseId) {
+    const user = getCurrentUser();
+    return `course_progress_${user.email}_${courseId}`;
+}
+
+// Загрузка прогресса для конкретного курса
+function loadCourseProgress(courseId) {
+    const user = getCurrentUser();
+    if (!user.email) return null;
+    
+    const key = getProgressKey(courseId);
+    return JSON.parse(localStorage.getItem(key) || '{}');
 }
 
 // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
@@ -73,7 +95,7 @@ function loadUserCourses(user) {
         return;
     }
 
-    // Получаем данные о курсах
+    // Получаем данные о курсах с реальным прогрессом из localStorage
     const userCourseData = getUserCourseData(user.courses);
     
     container.innerHTML = `
@@ -83,95 +105,285 @@ function loadUserCourses(user) {
     `;
 }
 
-// Получаем данные о курсах пользователя
+// Получаем данные о курсах пользователя с учетом реального прогресса
 function getUserCourseData(courseIds) {
+    const user = getCurrentUser();
+    
+    // Базовая информация о курсах (всего 10 уроков в каждом)
     const coursesData = {
         'fullstack': {
             id: 'fullstack',
             title: 'Fullstack-разработка',
             icon: '💻',
             description: 'JavaScript, React, Node.js, MongoDB',
-            progress: 30,
-            lessonsTotal: 120,
-            lessonsCompleted: 36,
-            nextLesson: 'React Components',
-            lastActivity: '2 часа назад'
+            lessonsTotal: 10,
+            level: 'С нуля до PRO',
+            teacher: 'Алексей Иванов',
+            fullDescription: 'Полный курс по веб-разработке. Вы научитесь создавать современные веб-приложения с нуля.',
+            skills: [
+                'JavaScript (ES6+)',
+                'React и Redux',
+                'Node.js и Express',
+                'MongoDB и PostgreSQL',
+                'Docker и DevOps',
+                'Git и GitHub'
+            ],
+            duration: '6 месяцев',
+            projects: 6,
+            price: '25 000₽'
         },
         'mobile': {
             id: 'mobile',
             title: 'Мобильная разработка',
             icon: '📱',
             description: 'React Native, iOS & Android',
-            progress: 15,
-            lessonsTotal: 100,
-            lessonsCompleted: 15,
-            nextLesson: 'Настройка окружения',
-            lastActivity: 'вчера'
+            lessonsTotal: 10,
+            level: 'Для начинающих',
+            teacher: 'Мария Петрова',
+            fullDescription: 'Научитесь создавать мобильные приложения для iOS и Android с помощью React Native.',
+            skills: [
+                'React Native',
+                'Нативные модули',
+                'Работа с API',
+                'Публикация в сторах',
+                'UI/UX для мобильных',
+                'Firebase'
+            ],
+            duration: '5 месяцев',
+            projects: 4,
+            price: '22 000₽'
         },
         'design': {
             id: 'design',
             title: 'UI/UX Дизайн',
             icon: '🎨',
             description: 'Figma, Adobe XD, Прототипирование',
-            progress: 0,
-            lessonsTotal: 80,
-            lessonsCompleted: 0,
-            nextLesson: 'Введение в дизайн',
-            lastActivity: 'еще не начат'
+            lessonsTotal: 10,
+            level: 'С нуля',
+            teacher: 'Екатерина Смирнова',
+            fullDescription: 'Освойте профессию дизайнера интерфейсов. Научитесь создавать удобные и красивые дизайны.',
+            skills: [
+                'Figma',
+                'Adobe XD',
+                'Прототипирование',
+                'Дизайн-системы',
+                'User Research',
+                'Анимация'
+            ],
+            duration: '4 месяца',
+            projects: 5,
+            price: '18 000₽'
         },
         'python': {
             id: 'python',
             title: 'Python & Data Science',
             icon: '🐍',
             description: 'Анализ данных и машинное обучение',
-            progress: 0,
-            lessonsTotal: 140,
-            lessonsCompleted: 0,
-            nextLesson: 'Основы Python',
-            lastActivity: 'еще не начат'
+            lessonsTotal: 10,
+            level: 'Продвинутый',
+            teacher: 'Дмитрий Соколов',
+            fullDescription: 'Станьте Data Scientist с нуля. Изучите Python, библиотеки для анализа данных и машинное обучение.',
+            skills: [
+                'Python',
+                'Pandas и NumPy',
+                'Машинное обучение',
+                'TensorFlow',
+                'Визуализация данных',
+                'SQL'
+            ],
+            duration: '7 месяцев',
+            projects: 3,
+            price: '30 000₽'
         },
         'java': {
             id: 'java',
             title: 'Java разработка',
             icon: '☕',
             description: 'Enterprise разработка на Java',
-            progress: 0,
-            lessonsTotal: 110,
-            lessonsCompleted: 0,
-            nextLesson: 'Java Core',
-            lastActivity: 'еще не начат'
+            lessonsTotal: 10,
+            level: 'Для начинающих',
+            teacher: 'Сергей Волков',
+            fullDescription: 'Освойте Java для создания корпоративных приложений. Spring Framework, Hibernate, микросервисы.',
+            skills: [
+                'Java Core',
+                'Spring Framework',
+                'Hibernate',
+                'Микросервисы',
+                'Базы данных',
+                'Тестирование'
+            ],
+            duration: '6 месяцев',
+            projects: 4,
+            price: '28 000₽'
         }
     };
 
-    return courseIds.map(courseId => coursesData[courseId] || {
-        id: courseId,
-        title: courseId,
-        icon: '📚',
-        description: 'Курс в разработке',
-        progress: 0,
-        lessonsTotal: 0,
-        lessonsCompleted: 0,
-        nextLesson: 'Скоро',
-        lastActivity: 'ожидается'
+    // Названия уроков для каждого курса
+    const lessonTitles = {
+        'fullstack': [
+            'Введение в JavaScript',
+            'Типы данных и переменные',
+            'Функции в JavaScript',
+            'Условные операторы',
+            'Циклы в JavaScript',
+            'Массивы и методы',
+            'Объекты и методы',
+            'Введение в React',
+            'Компоненты и пропсы',
+            'Состояние и хуки'
+        ],
+        'mobile': [
+            'Введение в React Native',
+            'Настройка окружения',
+            'Компоненты React Native',
+            'Стилизация в React Native',
+            'Навигация в приложении',
+            'Работа с API',
+            'Хранилище данных',
+            'Камера и галерея',
+            'Публикация в Google Play',
+            'Публикация в App Store'
+        ],
+        'design': [
+            'Введение в дизайн',
+            'Основы Figma',
+            'Цвет и типографика',
+            'Сетки и композиция',
+            'Создание прототипов',
+            'UI элементы',
+            'Дизайн мобильных приложений',
+            'Дизайн веб-сайтов',
+            'Презентация проектов',
+            'Портфолио дизайнера'
+        ],
+        'python': [
+            'Основы Python',
+            'Типы данных Python',
+            'Условные операторы',
+            'Циклы в Python',
+            'Функции',
+            'Работа с файлами',
+            'Библиотека NumPy',
+            'Библиотека Pandas',
+            'Визуализация данных',
+            'Введение в ML'
+        ],
+        'java': [
+            'Java Core',
+            'Переменные и типы',
+            'Условные операторы',
+            'Циклы в Java',
+            'Массивы',
+            'Классы и объекты',
+            'Наследование',
+            'Интерфейсы',
+            'Исключения',
+            'Коллекции'
+        ]
+    };
+
+    return courseIds.map(courseId => {
+        const baseCourse = coursesData[courseId];
+        if (!baseCourse) {
+            return {
+                id: courseId,
+                title: courseId,
+                icon: '📚',
+                description: 'Курс в разработке',
+                lessonsTotal: 10,
+                level: 'Неизвестно',
+                teacher: 'Неизвестно',
+                progress: 0,
+                lessonsCompleted: 0,
+                nextLesson: 'Скоро',
+                lastActivity: 'еще не начат'
+            };
+        }
+        
+        // Загружаем прогресс с привязкой к пользователю
+        const savedProgress = loadCourseProgress(courseId);
+        
+        let lessonsCompleted = 0;
+        let nextLesson = 'Введение';
+        let lastActivity = 'еще не начат';
+        
+        // Проверяем, что прогресс принадлежит текущему пользователю
+        if (savedProgress && savedProgress.userId === user.email && savedProgress.completedLessons) {
+            lessonsCompleted = savedProgress.completedLessons;
+            
+            // Определяем следующий урок
+            if (lessonsCompleted < baseCourse.lessonsTotal) {
+                const titles = lessonTitles[courseId] || Array(10).fill('Урок');
+                nextLesson = titles[lessonsCompleted] || `Урок ${lessonsCompleted + 1}`;
+            } else {
+                nextLesson = 'Курс завершен';
+            }
+            
+            // Определяем время последней активности
+            if (savedProgress.lastAccess) {
+                const lastDate = new Date(savedProgress.lastAccess);
+                const now = new Date();
+                const diffHours = Math.floor((now - lastDate) / (1000 * 60 * 60));
+                
+                if (diffHours < 1) {
+                    lastActivity = 'только что';
+                } else if (diffHours < 24) {
+                    lastActivity = `${diffHours} ${getHoursWord(diffHours)} назад`;
+                } else {
+                    const diffDays = Math.floor(diffHours / 24);
+                    lastActivity = `${diffDays} ${getDaysWord(diffDays)} назад`;
+                }
+            }
+        }
+        
+        // Вычисляем прогресс в процентах
+        const progress = Math.round((lessonsCompleted / baseCourse.lessonsTotal) * 100);
+        
+        return {
+            ...baseCourse,
+            progress: progress,
+            lessonsCompleted: lessonsCompleted,
+            lessonsTotal: baseCourse.lessonsTotal,
+            nextLesson: nextLesson,
+            lastActivity: lastActivity
+        };
     });
+}
+
+// Вспомогательная функция для склонения слова "час"
+function getHoursWord(hours) {
+    if (hours % 10 === 1 && hours % 100 !== 11) return 'час';
+    if ([2, 3, 4].includes(hours % 10) && ![12, 13, 14].includes(hours % 100)) return 'часа';
+    return 'часов';
+}
+
+// Вспомогательная функция для склонения слова "день"
+function getDaysWord(days) {
+    if (days % 10 === 1 && days % 100 !== 11) return 'день';
+    if ([2, 3, 4].includes(days % 10) && ![12, 13, 14].includes(days % 100)) return 'дня';
+    return 'дней';
 }
 
 // Создание карточки курса
 function createCourseCard(course) {
     const progressWidth = course.progress > 0 ? course.progress : 0;
+    const isStarted = course.lessonsCompleted > 0;
     
     return `
         <div class="user-course-card" data-course-id="${course.id}">
             <div class="course-card-header">
                 <div class="course-icon">${course.icon}</div>
-                <div class="course-status ${course.progress > 0 ? 'active' : 'not-started'}">
-                    ${course.progress > 0 ? 'В процессе' : 'Не начат'}
+                <div class="course-status ${isStarted ? 'active' : 'not-started'}">
+                    ${isStarted ? 'В процессе' : 'Не начат'}
                 </div>
             </div>
             
             <div class="course-card-content">
                 <h3>${course.title}</h3>
                 <p>${course.description}</p>
+                <div style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">
+                    👨‍🏫 ${course.teacher} • ${course.level}
+                </div>
                 
                 <div class="course-progress">
                     <div class="progress-info">
@@ -179,7 +391,7 @@ function createCourseCard(course) {
                         <span class="progress-percent">${course.progress}%</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progressWidth}%"></div>
+                        <div class="progress-fill" style="width: ${progressWidth}%;"></div>
                     </div>
                     <div class="progress-stats">
                         <span>${course.lessonsCompleted}/${course.lessonsTotal} уроков</span>
@@ -196,7 +408,7 @@ function createCourseCard(course) {
             </div>
             
             <div class="course-card-actions">
-                ${course.progress > 0 ? `
+                ${isStarted ? `
                     <button class="continue-btn" onclick="continueCourse('${course.id}')">
                         🎯 Продолжить
                     </button>
@@ -213,24 +425,14 @@ function createCourseCard(course) {
     `;
 }
 
-// ГЛОБАЛЬНАЯ функция для продолжения курса
+// Глобальная функция для продолжения курса
 window.continueCourse = function(courseId) {
-    // Перенаправляем на страницу курса с ID
     window.location.href = `course-view.html?id=${courseId}`;
 }
 
-// ГЛОБАЛЬНАЯ функция для начала курса
+// Глобальная функция для начала курса
 window.startCourse = function(courseId) {
-    // Тоже перенаправляем на страницу курса
     window.location.href = `course-view.html?id=${courseId}`;
-}
-
-function startCourse(courseId) {
-    alert(`Начинаем курс "${courseId}"! 🚀`);
-}
-
-function showCourseDetails(courseId) {
-    alert(`Подробности курса "${courseId}" ℹ️`);
 }
 
 // ==================== УДАЛЕНИЕ АККАУНТА ====================
@@ -318,7 +520,7 @@ function deleteAccount() {
     }, 1500);
 }
 
-// Вспомогательные функции
+// Вспомогательные функции для удаления
 function showDeleteError(element, message) {
     element.className = 'status-message status-error';
     element.innerHTML = message;
@@ -328,6 +530,8 @@ function showDeleteSuccess(element, message) {
     element.className = 'status-message status-success';
     element.innerHTML = message;
 }
+
+// ==================== ФУНКЦИИ ДЛЯ СКРОЛЛА ====================
 
 function disableBodyScroll() {
     document.body.style.overflow = 'hidden';
@@ -351,37 +555,13 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadUserData();
-    
-    // Обработчики закрытия модальных окон
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeAllModals();
-        }
-    });
-    
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeAllModals();
-        }
-    });
-    
-    document.querySelectorAll('.modal-content').forEach(modalContent => {
-        modalContent.addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
-    });
-});
 // ==================== ФУНКЦИЯ ДЛЯ ПОДРОБНОЙ ИНФОРМАЦИИ О КУРСЕ ====================
 window.showCourseDetails = function(courseId) {
     // Получаем данные о курсе
     const course = getUserCourseData([courseId])[0];
     
-    // Данные для разных курсов (можно расширить)
-    const courseDetails = {
+    // Данные для разных курсов (из coursesData)
+    const coursesData = {
         'fullstack': {
             fullDescription: 'Полный курс по веб-разработке. Вы научитесь создавать современные веб-приложения с нуля, используя JavaScript, React, Node.js и MongoDB.',
             skills: [
@@ -393,10 +573,9 @@ window.showCourseDetails = function(courseId) {
                 'Git и GitHub'
             ],
             duration: '6 месяцев',
-            lessons: 120,
+            lessons: 10,
             projects: 6,
-            price: '25 000₽',
-            teacher: 'Алексей Иванов (Yandex)'
+            price: '25 000₽'
         },
         'mobile': {
             fullDescription: 'Научитесь создавать мобильные приложения для iOS и Android с помощью React Native. Курс включает публикацию приложений в AppStore и Google Play.',
@@ -409,10 +588,9 @@ window.showCourseDetails = function(courseId) {
                 'Firebase'
             ],
             duration: '5 месяцев',
-            lessons: 100,
+            lessons: 10,
             projects: 4,
-            price: '22 000₽',
-            teacher: 'Мария Петрова (Tinkoff)'
+            price: '22 000₽'
         },
         'design': {
             fullDescription: 'Освойте профессию дизайнера интерфейсов. Научитесь создавать удобные и красивые дизайны для веба и мобильных приложений.',
@@ -425,10 +603,9 @@ window.showCourseDetails = function(courseId) {
                 'Анимация'
             ],
             duration: '4 месяца',
-            lessons: 80,
+            lessons: 10,
             projects: 5,
-            price: '18 000₽',
-            teacher: 'Екатерина Смирнова (Wildberries)'
+            price: '18 000₽'
         },
         'python': {
             fullDescription: 'Станьте Data Scientist с нуля. Изучите Python, библиотеки для анализа данных и машинное обучение.',
@@ -441,10 +618,9 @@ window.showCourseDetails = function(courseId) {
                 'SQL'
             ],
             duration: '7 месяцев',
-            lessons: 140,
+            lessons: 10,
             projects: 3,
-            price: '30 000₽',
-            teacher: 'Дмитрий Соколов (СберТех)'
+            price: '30 000₽'
         },
         'java': {
             fullDescription: 'Освойте Java для создания корпоративных приложений. Spring Framework, Hibernate, микросервисы.',
@@ -457,21 +633,19 @@ window.showCourseDetails = function(courseId) {
                 'Тестирование'
             ],
             duration: '6 месяцев',
-            lessons: 110,
+            lessons: 10,
             projects: 4,
-            price: '28 000₽',
-            teacher: 'Сергей Волков (Тинькофф)'
+            price: '28 000₽'
         }
     };
     
-    const details = courseDetails[courseId] || {
-        fullDescription: course.description,
+    const details = coursesData[courseId] || {
+        fullDescription: course.description || 'Описание курса',
         skills: ['JavaScript', 'React', 'Node.js'],
         duration: '6 месяцев',
-        lessons: 120,
+        lessons: 10,
         projects: 4,
-        price: '25 000₽',
-        teacher: 'Алексей Иванов'
+        price: '25 000₽'
     };
     
     // Создаем модальное окно
@@ -500,12 +674,11 @@ window.showCourseDetails = function(courseId) {
             max-height: 85vh;
             overflow-y: auto;
             position: relative;
-            box-shadow: var(--shadow-xl);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             animation: modalSlideIn 0.4s ease;
         ">
-            <!-- Хедер с градиентом -->
             <div style="
-                background: var(--gradient);
+                background: linear-gradient(135deg, #8b5cf6, #06b6d4);
                 padding: 2rem;
                 border-radius: 32px 32px 0 0;
                 color: white;
@@ -543,15 +716,14 @@ window.showCourseDetails = function(courseId) {
             </div>
             
             <div style="padding: 2rem;">
-                <!-- Прогресс (если курс начат) -->
-                ${course.progress > 0 ? `
+                ${course.lessonsCompleted > 0 ? `
                     <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; border-left: 4px solid #0ea5e9;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
                             <span style="font-weight: 600;">Ваш прогресс:</span>
                             <span style="color: #0ea5e9; font-weight: 700;">${course.progress}%</span>
                         </div>
                         <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
-                            <div style="width: ${course.progress}%; height: 100%; background: var(--gradient); border-radius: 4px;"></div>
+                            <div style="width: ${course.progress}%; height: 100%; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border-radius: 4px;"></div>
                         </div>
                         <div style="margin-top: 0.8rem; color: #64748b;">
                             Пройдено ${course.lessonsCompleted} из ${course.lessonsTotal} уроков
@@ -559,15 +731,13 @@ window.showCourseDetails = function(courseId) {
                     </div>
                 ` : ''}
                 
-                <!-- Описание курса -->
                 <div style="margin-bottom: 2rem;">
                     <h3 style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                         <span>📖</span> О курсе
                     </h3>
-                    <p style="color: var(--gray); line-height: 1.7;">${details.fullDescription}</p>
+                    <p style="color: #64748b; line-height: 1.7;">${details.fullDescription}</p>
                 </div>
                 
-                <!-- Чему научитесь -->
                 <div style="margin-bottom: 2rem;">
                     <h3 style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                         <span>🎯</span> Чему вы научитесь
@@ -575,59 +745,56 @@ window.showCourseDetails = function(courseId) {
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
                         ${details.skills.map(skill => `
                             <div style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 12px;">
-                                <span style="color: var(--success);">✓</span>
+                                <span style="color: #10b981;">✓</span>
                                 <span>${skill}</span>
                             </div>
                         `).join('')}
                     </div>
                 </div>
                 
-                <!-- Детали курса -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
                     <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
                         <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">⏱️</div>
                         <div style="font-weight: 600;">${details.duration}</div>
-                        <div style="font-size: 0.8rem; color: var(--gray);">Длительность</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Длительность</div>
                     </div>
                     <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
                         <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">📚</div>
                         <div style="font-weight: 600;">${details.lessons} уроков</div>
-                        <div style="font-size: 0.8rem; color: var(--gray);">Всего</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Всего</div>
                     </div>
                     <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
                         <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">🎯</div>
                         <div style="font-weight: 600;">${details.projects} проектов</div>
-                        <div style="font-size: 0.8rem; color: var(--gray);">В портфолио</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">В портфолио</div>
                     </div>
                     <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; text-align: center;">
                         <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">💰</div>
-                        <div style="font-weight: 600; color: var(--primary);">${details.price}</div>
-                        <div style="font-size: 0.8rem; color: var(--gray);">Стоимость</div>
+                        <div style="font-weight: 600; color: #8b5cf6;">${details.price}</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Стоимость</div>
                     </div>
                 </div>
                 
-                <!-- Преподаватель -->
                 <div style="background: linear-gradient(135deg, #f0f9ff, #ffffff); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem;">
                     <h3 style="font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                         <span>👨‍🏫</span> Преподаватель
                     </h3>
                     <div style="display: flex; align-items: center; gap: 1rem;">
-                        <div style="width: 50px; height: 50px; background: var(--gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
-                            ${details.teacher.split(' ').map(n => n[0]).join('')}
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
+                            ${course.teacher ? course.teacher.split(' ').map(n => n[0]).join('') : 'ПП'}
                         </div>
                         <div>
-                            <div style="font-weight: 700;">${details.teacher}</div>
-                            <div style="font-size: 0.9rem; color: var(--gray);">Ведущий разработчик</div>
+                            <div style="font-weight: 700;">${course.teacher || 'Преподаватель'}</div>
+                            <div style="font-size: 0.9rem; color: #64748b;">Ведущий разработчик</div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Кнопки действий -->
                 <div style="display: flex; gap: 1rem;">
-                    ${course.progress > 0 ? `
+                    ${course.lessonsCompleted > 0 ? `
                         <button onclick="window.continueCourse('${courseId}')" style="
                             flex: 1;
-                            background: var(--gradient);
+                            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
                             color: white;
                             border: none;
                             padding: 1.2rem;
@@ -640,14 +807,14 @@ window.showCourseDetails = function(courseId) {
                             align-items: center;
                             justify-content: center;
                             gap: 0.5rem;
-                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'" 
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'" 
                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                             🎯 Продолжить обучение
                         </button>
                     ` : `
                         <button onclick="window.startCourse('${courseId}')" style="
                             flex: 1;
-                            background: var(--gradient);
+                            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
                             color: white;
                             border: none;
                             padding: 1.2rem;
@@ -660,7 +827,7 @@ window.showCourseDetails = function(courseId) {
                             align-items: center;
                             justify-content: center;
                             gap: 0.5rem;
-                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'" 
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'" 
                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                             🚀 Начать обучение
                         </button>
@@ -668,7 +835,7 @@ window.showCourseDetails = function(courseId) {
                     <button onclick="this.closest('div[style*=\\'fixed\\']').remove()" style="
                         padding: 0 2rem;
                         background: #f1f5f9;
-                        color: var(--dark);
+                        color: #0f172a;
                         border: none;
                         border-radius: 16px;
                         font-weight: 600;
@@ -684,3 +851,62 @@ window.showCourseDetails = function(courseId) {
     
     document.body.appendChild(modal);
 }
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserData();
+    
+    // Добавляем CSS анимации
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-60px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Обработчики закрытия модальных окон
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            closeAllModals();
+        }
+    });
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeAllModals();
+        }
+    });
+    
+    document.querySelectorAll('.modal-content').forEach(modalContent => {
+        modalContent.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    });
+});
+
+// Делаем функции глобальными
+window.logout = logout;
+window.showDeleteAccountModal = showDeleteAccountModal;
+window.closeDeleteAccountModal = closeDeleteAccountModal;
+window.validateDeleteEmail = validateDeleteEmail;
+window.deleteAccount = deleteAccount;
