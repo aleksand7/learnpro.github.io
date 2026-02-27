@@ -2307,12 +2307,19 @@ function loadCoursePage() {
                     </div>
                     <ul class="resources-list">
                         ${course.resources.map(resource => `
-                            <li onclick="downloadResource('${resource}')" style="cursor: pointer;">
-                                📄 ${resource}
-                                <span style="margin-left: auto; font-size: 0.8rem;">⬇️</span>
+                            <li onclick="downloadResource('${resource}', '${courseId}')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                    ${resource.includes('.pdf') ? '📄' : resource.includes('.zip') ? '📦' : '📝'}
+                                    ${resource}
+                                </span>
+                                <span style="font-size: 0.8rem; color: #8b5cf6;">⬇️ Скачать</span>
                             </li>
                         `).join('')}
                     </ul>
+                    
+                    <button class="complete-lesson-btn" onclick="downloadAllResources('${courseId}')" style="margin-bottom: 10px; background: linear-gradient(135deg, #10b981, #059669);">
+                        📦 Скачать все материалы
+                    </button>
                     
                     <button class="complete-lesson-btn" onclick="completeCurrentLesson('${courseId}')">
                         ✅ Отметить текущий урок выполненным
@@ -2436,10 +2443,6 @@ function playLesson(courseId, lessonId) {
     } else {
         showNotification(`▶️ Запускаем видеоурок: ${lesson.title}`, 'info');
     }
-}
-
-function downloadResource(resourceName) {
-    showNotification(`📥 Начинаем скачивание: ${resourceName}`, 'info');
 }
 
 function logout() {
@@ -2627,7 +2630,7 @@ function showQuizResult(courseId, result) {
             <h3>🎉 Поздравляем!</h3>
             <p>Вы набрали ${result.score}% (${result.correct}/${result.total} правильных ответов)</p>
             <p>Тест пройден успешно!</p>
-            <button class="quiz-submit-btn" onclick="showCertificate('${courseId}')" style="margin-top: 1rem; display: inline-block;">
+            <button class="quiz-submit-btn" onclick="previewCertificate('${courseId}')" style="margin-top: 1rem; display: inline-block;">
                 🎓 Получить сертификат
             </button>
         `;
@@ -2661,9 +2664,210 @@ function resetQuiz(courseId) {
     initQuiz(courseId);
 }
 
-function showCertificate(courseId) {
+// ==================== ФУНКЦИИ ДЛЯ СКАЧИВАНИЯ МАТЕРИАЛОВ ====================
+
+// Функция для скачивания материалов
+function downloadResource(resourceName, courseId) {
+    const course = lessonsData[courseId];
+    
+    // Создаем содержимое файла
+    let content = '';
+    let filename = resourceName;
+    let type = 'text/plain';
+    
+    // Определяем тип файла по расширению
+    if (resourceName.endsWith('.pdf')) {
+        type = 'application/pdf';
+        // Для PDF создаем демо-контент
+        content = `%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>\n2 0 obj<</Type/Pages/Count 1/Kids[3 0 R]>>\n3 0 obj<</Type/Page/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<<>>>>\nendobj\nxref\n0 4\n0000000000 65535 f\n0000000009 00000 n\n0000000052 00000 n\n0000000101 00000 n\ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n178\n%%EOF`;
+    } else if (resourceName.endsWith('.zip')) {
+        type = 'application/zip';
+        content = 'PK\x03\x04\x14\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00';
+        filename = 'demo.zip';
+    } else if (resourceName.endsWith('.txt')) {
+        type = 'text/plain';
+        content = generateResourceContent(courseId, resourceName);
+    } else {
+        content = generateResourceContent(courseId, resourceName);
+    }
+    
+    // Создаем и скачиваем файл
+    const blob = new Blob([content], { type: type });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    showNotification(`📥 Начинаем скачивание: ${resourceName}`, 'info');
+}
+
+// Генерация содержимого для демо-файлов
+function generateResourceContent(courseId, resourceName) {
+    const course = lessonsData[courseId];
+    
+    if (resourceName.includes('Все материалы курса')) {
+        return `Все материалы курса "${course.title}"
+        
+Список файлов:
+1. Презентации к урокам (10 файлов)
+2. Домашние задания (10 заданий)
+3. Дополнительные материалы
+4. Примеры кода
+5. Полезные ссылки
+
+Курс: ${course.title}
+Преподаватель: ${course.teacher.name}
+Длительность: ${course.duration}
+Уроков: ${course.lessons.length}
+
+Инструкция по установке:
+1. Распакуйте архив
+2. Откройте папку с материалами
+3. Следуйте инструкциям в README.txt
+
+Ссылка на скачивание будет отправлена на email в ближайшее время.`;
+    }
+    
+    if (resourceName.includes('Шпаргалка по React')) {
+        return `Шпаргалка по React
+
+🔹 Основные хуки:
+useState() - для состояния
+useEffect() - для побочных эффектов
+useContext() - для контекста
+useRef() - для ссылок
+
+🔹 Компоненты:
+function Component(props) {
+  return <div>{props.children}</div>
+}
+
+🔹 Стилизация:
+const styles = {
+  container: {
+    padding: '20px'
+  }
+}
+
+🔹 Пропсы:
+<Component name="value" />
+
+🔹 Состояние:
+const [count, setCount] = useState(0)`;
+    }
+    
+    if (resourceName.includes('Домашние задания')) {
+        let tasks = '';
+        course.lessons.forEach((lesson, index) => {
+            tasks += `\n\nУрок ${index + 1}. ${lesson.title}\n`;
+            tasks += `Задание: ${generateTaskForLesson(lesson.title)}\n`;
+            tasks += `Сложность: ${index < 3 ? 'Легкая' : index < 7 ? 'Средняя' : 'Высокая'}\n`;
+            tasks += `Дедлайн: ${index + 3} дня\n`;
+        });
+        
+        return `Домашние задания по курсу "${course.title}"${tasks}`;
+    }
+    
+    if (resourceName.includes('Полезные ссылки')) {
+        return `Полезные ссылки по курсу "${course.title}"
+
+📚 Документация:
+- Официальная документация
+- MDN Web Docs
+- W3Schools
+
+🎓 Дополнительные курсы:
+- Курс на YouTube
+- Статьи на Habr
+- Видеоуроки
+
+💬 Сообщества:
+- Telegram чат
+- Discord сервер
+- Форум поддержки
+
+🛠 Инструменты:
+- VS Code
+- Git
+- Figma
+
+⭐ Полезные ресурсы:
+- GitHub
+- Stack Overflow
+- CodePen`;
+    }
+    
+    return `Демо-файл: ${resourceName}\nКурс: ${course.title}`;
+}
+
+function generateTaskForLesson(lessonTitle) {
+    const tasks = [
+        'Напишите программу "Hello World"',
+        'Создайте переменные разных типов',
+        'Напишите функцию для сложения чисел',
+        'Создайте условный оператор',
+        'Напишите цикл для вывода чисел',
+        'Создайте массив и примените методы',
+        'Создайте объект с данными',
+        'Создайте простой компонент',
+        'Передайте пропсы в компонент',
+        'Используйте состояние в компоненте'
+    ];
+    
+    const index = Math.floor(Math.random() * tasks.length);
+    return tasks[index];
+}
+
+// Функция для скачивания всех материалов одним архивом
+function downloadAllResources(courseId) {
+    const course = lessonsData[courseId];
+    
+    showNotification('📦 Подготавливаем все материалы...', 'info');
+    
+    setTimeout(() => {
+        // Создаем мета-файл со списком всех материалов
+        const manifest = course.resources.map(res => `- ${res}`).join('\n');
+        const content = `Все материалы курса "${course.title}"
+
+Доступные файлы:
+${manifest}
+
+Для скачивания каждого файла нажмите на него в списке материалов.
+
+Курс: ${course.title}
+Всего материалов: ${course.resources.length}
+Дата генерации: ${new Date().toLocaleString()}
+        `;
+        
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${course.title}_материалы.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        showNotification('✅ Файл со списком материалов скачан!', 'success');
+    }, 1500);
+}
+
+// ==================== ФУНКЦИИ ДЛЯ СЕРТИФИКАТА ====================
+
+// Функция для предпросмотра сертификата
+function previewCertificate(courseId) {
     const course = lessonsData[courseId];
     const user = getCurrentUser();
+    
+    if (!course || !user) {
+        showNotification('Ошибка: данные не найдены', 'error');
+        return;
+    }
     
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -2673,13 +2877,11 @@ function showCertificate(courseId) {
         right: 0;
         bottom: 0;
         background: rgba(0,0,0,0.9);
-        backdrop-filter: blur(10px);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 100000;
         padding: 20px;
-        animation: fadeIn 0.3s ease;
     `;
     
     const today = new Date();
@@ -2691,75 +2893,158 @@ function showCertificate(courseId) {
             background: white;
             border-radius: 32px;
             width: 100%;
-            max-width: 1000px;
-            max-height: 95vh;
+            max-width: 900px;
+            max-height: 90vh;
             overflow-y: auto;
             position: relative;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            animation: certificateZoom 0.5s ease;
         ">
-            <button onclick="this.closest('div[style*=\\'fixed\\']').remove(); enableBodyScroll();" style="
-                position: absolute;
-                right: 20px;
-                top: 20px;
-                background: #f1f5f9;
-                border: none;
-                font-size: 2rem;
-                cursor: pointer;
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
+            <div style="
+                background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                padding: 1.5rem;
+                border-radius: 32px 32px 0 0;
                 display: flex;
+                justify-content: space-between;
                 align-items: center;
-                justify-content: center;
-                z-index: 10;
-                transition: all 0.3s;
-            " onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">×</button>
+                color: white;
+            ">
+                <h2 style="font-size: 1.5rem;">🎓 Сертификат об окончании</h2>
+                <button onclick="this.closest('div[style*=\\'fixed\\']').remove()" style="
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                    font-size: 2rem;
+                    cursor: pointer;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">×</button>
+            </div>
             
-            <div style="padding: 3rem;">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <div style="font-size: 5rem; margin-bottom: 1rem;">🎓</div>
-                    <h2 style="font-size: 2.5rem; color: #8b5cf6;">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h2>
-                </div>
-                
-                <div style="text-align: center; margin: 3rem 0;">
-                    <p style="font-size: 1.2rem; color: #64748b;">Настоящий сертификат подтверждает, что</p>
-                    <h3 style="font-size: 3rem; color: #0f172a; margin: 1rem 0;">${user.firstName} ${user.lastName}</h3>
-                    <p style="font-size: 1.2rem; color: #64748b;">успешно завершил(а) курс</p>
-                    <h2 style="font-size: 2.5rem; color: #8b5cf6; margin: 1rem 0;">${course.title}</h2>
+            <div style="padding: 2rem;">
+                <div style="
+                    padding: 2rem;
+                    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+                    border: 4px double #8b5cf6;
+                    border-radius: 24px;
+                    position: relative;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 20px;
+                        right: 30px;
+                        font-size: 60px;
+                        color: #8b5cf6;
+                        opacity: 0.1;
+                    ">🎓</div>
                     
-                    <div style="display: flex; justify-content: center; gap: 3rem; margin: 2rem 0;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 50px; margin-bottom: 10px;">🎓</div>
+                        <h1 style="font-size: 30px; color: #8b5cf6; margin-bottom: 5px;">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h1>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <p style="font-size: 16px; color: #64748b;">Настоящий сертификат подтверждает, что</p>
+                        <h2 style="
+                            font-size: 32px;
+                            color: #0f172a;
+                            margin: 15px 0;
+                            border-bottom: 2px solid #8b5cf6;
+                            border-top: 2px solid #8b5cf6;
+                            padding: 15px 0;
+                        ">${user.firstName} ${user.lastName}</h2>
+                        <p style="font-size: 16px; color: #64748b;">успешно завершил(а) курс</p>
+                        <h3 style="
+                            font-size: 26px;
+                            color: #8b5cf6;
+                            margin: 15px 0;
+                            padding: 8px 25px;
+                            border: 2px solid #8b5cf6;
+                            border-radius: 40px;
+                            display: inline-block;
+                        ">${course.title}</h3>
+                    </div>
+                    
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        gap: 30px;
+                        margin: 30px 0;
+                        font-size: 14px;
+                    ">
                         <span><strong>Дата:</strong> ${dateStr}</span>
                         <span><strong>№</strong> ${certNumber}</span>
                     </div>
+                    
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e2e8f0;
+                    ">
+                        <div style="text-align: center;">
+                            <div style="width: 150px; height: 2px; background: #8b5cf6; margin-bottom: 5px;"></div>
+                            <p style="font-family: 'Brush Script MT', cursive; font-size: 20px;">А. Иванов</p>
+                            <p style="color: #64748b; font-size: 12px;">Директор LearnPro</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="
+                                width: 60px;
+                                height: 60px;
+                                background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: white;
+                                font-size: 30px;
+                                margin: 0 auto 5px;
+                            ">✓</div>
+                            <p style="color: #8b5cf6; font-size: 12px;">Официально</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="width: 150px; height: 2px; background: #8b5cf6; margin-bottom: 5px;"></div>
+                            <p style="font-family: 'Brush Script MT', cursive; font-size: 20px;">М. Петрова</p>
+                            <p style="color: #64748b; font-size: 12px;">Академический директор</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
-                    <div style="text-align: center;">
-                        <div style="width: 200px; height: 2px; background: #8b5cf6; margin-bottom: 0.5rem;"></div>
-                        <p style="font-family: 'Brush Script MT', cursive; font-size: 1.5rem;">А. Иванов</p>
-                        <p>Директор LearnPro</p>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; margin: 0 auto;">✓</div>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <div style="width: 200px; height: 2px; background: #8b5cf6; margin-bottom: 0.5rem;"></div>
-                        <p style="font-family: 'Brush Script MT', cursive; font-size: 1.5rem;">М. Петрова</p>
-                        <p>Академический директор</p>
-                    </div>
+                <div style="display: flex; gap: 20px; margin-top: 30px;">
+                    <button onclick="downloadCertificatePDF('${courseId}')" style="
+                        flex: 1;
+                        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                        color: white;
+                        border: none;
+                        padding: 15px;
+                        border-radius: 12px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">
+                        📥 Скачать PDF
+                    </button>
+                    <button onclick="shareCertificate('${courseId}')" style="
+                        flex: 1;
+                        background: white;
+                        color: #8b5cf6;
+                        border: 2px solid #8b5cf6;
+                        padding: 15px;
+                        border-radius: 12px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">
+                        📤 Поделиться
+                    </button>
                 </div>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; padding: 2rem; background: #f8fafc;">
-                <button onclick="downloadCertificatePDF('${courseId}')" style="flex: 1; background: linear-gradient(135deg, #8b5cf6, #06b6d4); color: white; border: none; padding: 1rem; border-radius: 12px; font-weight: 700; cursor: pointer;">
-                    📥 Скачать PDF
-                </button>
-                <button onclick="shareCertificateFull()" style="flex: 1; background: white; color: #8b5cf6; border: 2px solid #8b5cf6; padding: 1rem; border-radius: 12px; font-weight: 700; cursor: pointer;">
-                    📤 Поделиться
-                </button>
             </div>
         </div>
     `;
@@ -2768,17 +3053,321 @@ function showCertificate(courseId) {
     disableBodyScroll();
 }
 
-function downloadCertificatePDF(courseId) {
-    showNotification('📥 Функция скачивания PDF будет добавлена позже', 'info');
+// Функция скачивания PDF сертификата
+// Функция скачивания PDF сертификата
+async function downloadCertificatePDF(courseId) {
+    const course = lessonsData[courseId];
+    const user = getCurrentUser();
+    
+    if (!course || !user) {
+        showNotification('Ошибка: данные не найдены', 'error');
+        return;
+    }
+    
+    showNotification('📄 Генерируем PDF...', 'info');
+    
+    try {
+        // Проверяем наличие библиотек
+        if (typeof html2canvas === 'undefined') {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        }
+        
+        if (typeof jspdf === 'undefined') {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+        }
+        
+        // Даем время на инициализацию
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const today = new Date();
+        const dateStr = today.toLocaleDateString('ru-RU');
+        const certNumber = `LRN-${today.getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
+        
+        // Создаем контейнер для сертификата
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '800px';
+        container.style.height = '600px';
+        container.style.backgroundColor = '#ffffff';
+        container.style.zIndex = '-1000';
+        container.style.opacity = '0';
+        container.style.pointerEvents = 'none';
+        
+        // Наполняем контейнер содержимым сертификата
+        container.innerHTML = `
+            <div style="
+                width: 100%;
+                height: 100%;
+                padding: 40px;
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 4px double #8b5cf6;
+                border-radius: 24px;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+                position: relative;
+                overflow: hidden;
+            ">
+                <!-- Водяной знак -->
+                <div style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(-15deg);
+                    font-size: 120px;
+                    color: rgba(139, 92, 246, 0.05);
+                    white-space: nowrap;
+                    pointer-events: none;
+                ">🎓 LEARNPRO</div>
+                
+                <!-- Шапка -->
+                <div style="text-align: center; margin-bottom: 20px; position: relative; z-index: 1;">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🎓</div>
+                    <h1 style="
+                        font-size: 32px;
+                        color: #8b5cf6;
+                        margin: 0 0 5px 0;
+                        font-weight: 800;
+                        letter-spacing: 2px;
+                    ">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h1>
+                </div>
+                
+                <!-- Основной контент -->
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1;">
+                    <p style="font-size: 16px; color: #64748b; text-align: center; margin: 5px 0;">
+                        Настоящий сертификат подтверждает, что
+                    </p>
+                    
+                    <h2 style="
+                        font-size: 36px;
+                        color: #0f172a;
+                        text-align: center;
+                        margin: 15px 0;
+                        padding: 15px 0;
+                        border-top: 2px solid #8b5cf6;
+                        border-bottom: 2px solid #8b5cf6;
+                        font-weight: 700;
+                    ">
+                        ${user.firstName} ${user.lastName}
+                    </h2>
+                    
+                    <p style="font-size: 16px; color: #64748b; text-align: center; margin: 5px 0;">
+                        успешно завершил(а) курс
+                    </p>
+                    
+                    <h3 style="
+                        font-size: 28px;
+                        color: #8b5cf6;
+                        text-align: center;
+                        margin: 15px auto;
+                        padding: 8px 25px;
+                        border: 2px solid #8b5cf6;
+                        border-radius: 40px;
+                        display: inline-block;
+                        font-weight: 600;
+                    ">
+                        ${course.title}
+                    </h3>
+                    
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        gap: 40px;
+                        margin: 20px 0;
+                        font-size: 14px;
+                    ">
+                        <span style="color: #475569;">
+                            <strong style="color: #0f172a;">Дата:</strong> ${dateStr}
+                        </span>
+                        <span style="color: #475569;">
+                            <strong style="color: #0f172a;">№</strong> ${certNumber}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Подписи -->
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    margin-top: 20px;
+                    position: relative;
+                    z-index: 1;
+                ">
+                    <div style="text-align: center; width: 30%;">
+                        <div style="width: 80%; height: 2px; background: #8b5cf6; margin: 0 auto 5px;"></div>
+                        <p style="font-family: 'Brush Script MT', cursive; font-size: 20px; margin: 0;">А. Иванов</p>
+                        <p style="color: #64748b; font-size: 12px; margin: 2px 0 0;">Директор LearnPro</p>
+                    </div>
+                    
+                    <div style="text-align: center; width: 30%;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-size: 24px;
+                            margin: 0 auto 5px;
+                        ">✓</div>
+                        <p style="color: #8b5cf6; font-size: 12px; margin: 0;">Официально</p>
+                    </div>
+                    
+                    <div style="text-align: center; width: 30%;">
+                        <div style="width: 80%; height: 2px; background: #8b5cf6; margin: 0 auto 5px;"></div>
+                        <p style="font-family: 'Brush Script MT', cursive; font-size: 20px; margin: 0;">М. Петрова</p>
+                        <p style="color: #64748b; font-size: 12px; margin: 2px 0 0;">Академический директор</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Добавляем контейнер в DOM
+        document.body.appendChild(container);
+        
+        // Ждем рендеринга
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Получаем первый дочерний элемент (наш сертификат)
+        const certificateElement = container.firstElementChild;
+        
+        if (!certificateElement) {
+            throw new Error('Элемент сертификата не создан');
+        }
+        
+        // Генерируем канвас
+        const canvas = await html2canvas(certificateElement, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            logging: false,
+            allowTaint: false,
+            useCORS: true,
+            windowWidth: 800,
+            windowHeight: 600
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        
+        // Создаем PDF
+        const pdf = new jspdf.jsPDF({
+            orientation: 'landscape',
+            unit: 'px',
+            format: [canvas.width, canvas.height]
+        });
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        
+        // Очищаем имя файла
+        const safeFileName = `${course.title}_${user.firstName}_${user.lastName}`
+            .replace(/[^\wа-яА-ЯёЁ]/g, '_')
+            .replace(/_+/g, '_');
+            
+        pdf.save(`LearnPro_${safeFileName}.pdf`);
+        
+        // Удаляем временный контейнер
+        document.body.removeChild(container);
+        
+        showNotification('✅ PDF успешно скачан!', 'success');
+        
+    } catch (error) {
+        console.error('❌ Ошибка при создании PDF:', error);
+        showNotification('❌ Ошибка при создании PDF. Использую текстовый формат...', 'warning');
+        
+        // Запасной вариант - текстовый файл
+        setTimeout(() => downloadCertificateText(courseId), 500);
+    }
 }
 
-function shareCertificateFull() {
-    showNotification('📤 Функция поделиться будет добавлена позже', 'info');
+// Функция для скачивания текстовой версии сертификата
+function downloadCertificateText(courseId) {
+    const course = lessonsData[courseId];
+    const user = getCurrentUser();
+    
+    if (!course || !user) return;
+    
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('ru-RU');
+    const certNumber = `LRN-${today.getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
+    
+    const certificateText = `╔════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║                    СЕРТИФИКАТ ОБ ОКОНЧАНИИ                        ║
+║                                                                    ║
+║   Настоящий сертификат подтверждает, что                          ║
+║                                                                    ║
+║   ${user.firstName} ${user.lastName.padEnd(30)}                   ║
+║                                                                    ║
+║   успешно завершил(а) курс                                         ║
+║                                                                    ║
+║   "${course.title}"                                                ║
+║                                                                    ║
+║   Дата: ${dateStr.padEnd(20)}                                     ║
+║   Номер: ${certNumber}                                             ║
+║                                                                    ║
+║                                                                    ║
+║   ____________________          ____________________              ║
+║   А. Иванов                     М. Петрова                        ║
+║   Директор LearnPro              Академический директор           ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+LearnPro - онлайн платформа для обучения IT профессиям
+Сертификат действителен и может быть проверен на сайте learnpro.ru`;
+
+    const blob = new Blob([certificateText], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `LearnPro_Сертификат_${user.firstName}_${user.lastName}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    showNotification('✅ Сертификат скачан в текстовом формате!', 'success');
+}
+
+// Функция для загрузки скриптов
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        // Проверяем, не загружен ли уже скрипт
+        const existingScript = document.querySelector(`script[src="${src}"]`);
+        if (existingScript) {
+            resolve();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// Копирование в буфер обмена
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('✅ Текст скопирован в буфер обмена!', 'success');
+    }).catch(() => {
+        showNotification('❌ Не удалось скопировать', 'error');
+    });
 }
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 document.addEventListener('DOMContentLoaded', function() {
     if (!checkAuth()) return;
+    
+    // Проверяем наличие библиотек
+    if (typeof jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+        console.warn('⚠️ Библиотеки для PDF не загружены. Подключите jsPDF и html2canvas для скачивания сертификатов.');
+    }
     
     loadQuizResults();
     
@@ -2826,13 +3415,332 @@ document.addEventListener('DOMContentLoaded', function() {
     loadCoursePage();
 });
 
+// Функция для предпросмотра сертификата
+function previewCertificate(courseId) {
+    const course = lessonsData[courseId];
+    const user = getCurrentUser();
+    
+    if (!course || !user) {
+        showNotification('Ошибка: данные не найдены', 'error');
+        return;
+    }
+    
+    // Отключаем скролл
+    disableBodyScroll();
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100000;
+        padding: 20px;
+    `;
+    
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('ru-RU');
+    const certNumber = `LRN-${today.getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
+    
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 32px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        ">
+            <div style="
+                background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                padding: 1.5rem;
+                border-radius: 32px 32px 0 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                color: white;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            ">
+                <h2 style="font-size: 1.5rem;">🎓 Сертификат об окончании</h2>
+                <button onclick="closeCertificateModal(this)" style="
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                    font-size: 2rem;
+                    cursor: pointer;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                   onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
+            </div>
+            
+            <div style="padding: 2rem;">
+                <div style="
+                    padding: 2rem;
+                    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+                    border: 4px double #8b5cf6;
+                    border-radius: 24px;
+                    position: relative;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 20px;
+                        right: 30px;
+                        font-size: 60px;
+                        color: #8b5cf6;
+                        opacity: 0.1;
+                    ">🎓</div>
+                    
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 50px; margin-bottom: 10px;">🎓</div>
+                        <h1 style="font-size: 30px; color: #8b5cf6; margin-bottom: 5px;">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h1>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <p style="font-size: 16px; color: #64748b;">Настоящий сертификат подтверждает, что</p>
+                        <h2 style="
+                            font-size: 32px;
+                            color: #0f172a;
+                            margin: 15px 0;
+                            border-bottom: 2px solid #8b5cf6;
+                            border-top: 2px solid #8b5cf6;
+                            padding: 15px 0;
+                        ">${user.firstName} ${user.lastName}</h2>
+                        <p style="font-size: 16px; color: #64748b;">успешно завершил(а) курс</p>
+                        <h3 style="
+                            font-size: 26px;
+                            color: #8b5cf6;
+                            margin: 15px 0;
+                            padding: 8px 25px;
+                            border: 2px solid #8b5cf6;
+                            border-radius: 40px;
+                            display: inline-block;
+                        ">${course.title}</h3>
+                    </div>
+                    
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        gap: 30px;
+                        margin: 30px 0;
+                        font-size: 14px;
+                    ">
+                        <span><strong>Дата:</strong> ${dateStr}</span>
+                        <span><strong>№</strong> ${certNumber}</span>
+                    </div>
+                    
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e2e8f0;
+                    ">
+                        <div style="text-align: center;">
+                            <div style="width: 150px; height: 2px; background: #8b5cf6; margin-bottom: 5px;"></div>
+                            <p style="font-family: 'Brush Script MT', cursive; font-size: 20px;">А. Иванов</p>
+                            <p style="color: #64748b; font-size: 12px;">Директор LearnPro</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="
+                                width: 60px;
+                                height: 60px;
+                                background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: white;
+                                font-size: 30px;
+                                margin: 0 auto 5px;
+                            ">✓</div>
+                            <p style="color: #8b5cf6; font-size: 12px;">Официально</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="width: 150px; height: 2px; background: #8b5cf6; margin-bottom: 5px;"></div>
+                            <p style="font-family: 'Brush Script MT', cursive; font-size: 20px;">М. Петрова</p>
+                            <p style="color: #64748b; font-size: 12px;">Академический директор</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; margin-top: 30px;">
+                    <button onclick="downloadCertificatePDF('${courseId}')" style="
+                        flex: 1;
+                        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                        color: white;
+                        border: none;
+                        padding: 15px;
+                        border-radius: 12px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'" 
+                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        📥 Скачать PDF
+                    </button>
+                    <button onclick="shareCertificate('${courseId}')" style="
+                        flex: 1;
+                        background: white;
+                        color: #8b5cf6;
+                        border: 2px solid #8b5cf6;
+                        padding: 15px;
+                        border-radius: 12px;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                    " onmouseover="this.style.background='#8b5cf6'; this.style.color='white'" 
+                       onmouseout="this.style.background='white'; this.style.color='#8b5cf6'">
+                        📤 Поделиться
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Добавляем обработчик для закрытия по клику на фон
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeCertificateModalFromElement(modal);
+        }
+    });
+    
+    document.body.appendChild(modal);
+}
+
+// Функция для закрытия модального окна сертификата
+function closeCertificateModal(button) {
+    const modal = button.closest('div[style*="position: fixed"]');
+    if (modal) {
+        document.body.removeChild(modal);
+        enableBodyScroll();
+    }
+}
+
+// Функция для закрытия модального окна по клику на фон
+function closeCertificateModalFromElement(modal) {
+    if (modal && modal.parentNode) {
+        document.body.removeChild(modal);
+        enableBodyScroll();
+    }
+}
+
+// Обновим функцию загрузки скриптов для обработки ошибок
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        // Проверяем, не загружен ли уже скрипт
+        const existingScript = document.querySelector(`script[src="${src}"]`);
+        if (existingScript) {
+            resolve();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => {
+            console.log(`✅ Скрипт загружен: ${src}`);
+            resolve();
+        };
+        script.onerror = (error) => {
+            console.error(`❌ Ошибка загрузки скрипта: ${src}`, error);
+            reject(error);
+        };
+        document.head.appendChild(script);
+    });
+}
+// Добавим обработчик Escape в инициализацию
+document.addEventListener('DOMContentLoaded', function() {
+    if (!checkAuth()) return;
+    
+    // Проверяем наличие библиотек
+    if (typeof jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+        console.warn('⚠️ Библиотеки для PDF не загружены. Подключите jsPDF и html2canvas для скачивания сертификатов.');
+    }
+    
+    loadQuizResults();
+    
+    // Обработчик для закрытия модальных окон по Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            // Ищем открытое модальное окно сертификата
+            const modals = document.querySelectorAll('div[style*="position: fixed"][style*="background: rgba(0,0,0,0.9)"]');
+            modals.forEach(modal => {
+                if (modal.parentNode) {
+                    document.body.removeChild(modal);
+                    enableBodyScroll();
+                }
+            });
+        }
+    });
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-60px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes certificateZoom {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    loadCoursePage();
+});
 // Делаем функции глобальными
 window.playLesson = playLesson;
 window.showTextLesson = showTextLesson;
 window.completeCurrentLesson = completeCurrentLesson;
 window.markLessonAsCompleted = markLessonAsCompleted;
 window.closeLessonModal = closeLessonModal;
-window.downloadResource = downloadResource;
 window.logout = logout;
 window.initQuiz = initQuiz;
 window.showQuizQuestion = showQuizQuestion;
@@ -2841,9 +3749,10 @@ window.nextQuestion = nextQuestion;
 window.prevQuestion = prevQuestion;
 window.submitQuiz = submitQuiz;
 window.resetQuiz = resetQuiz;
-window.showCertificate = showCertificate;
+window.downloadResource = downloadResource;
+window.downloadAllResources = downloadAllResources;
+window.previewCertificate = previewCertificate;
 window.downloadCertificatePDF = downloadCertificatePDF;
-window.shareCertificateFull = shareCertificateFull;
 window.disableBodyScroll = disableBodyScroll;
 window.enableBodyScroll = enableBodyScroll;
 window.showNotification = showNotification;
