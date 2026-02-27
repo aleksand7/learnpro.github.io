@@ -54,26 +54,16 @@
         <div class="payment-header">
             <div class="course-icon-small">💻</div>
             <div class="payment-course-info">
-                <h3 id="paymentCourseTitle">Fullstack-разработка</h3>
-                <div class="payment-price" id="paymentCoursePrice">25 000₽</div>
+                <h3 id="paymentCourseTitle">Мобильная разработка</h3>
+                <div class="payment-price" id="paymentCoursePrice">22 000₽</div>
             </div>
         </div>
 
-        <div class="compact-payment-form">
-            <!-- Методы оплаты в одну строку -->
-            <div class="payment-methods-compact">
-                <div class="payment-method-compact selected" data-method="card" onclick="selectPaymentMethod('card')">
-                    <span class="method-icon">💳</span>
-                    <span class="method-name">Карта</span>
-                </div>
-                <div class="payment-method-compact" data-method="yoomoney" onclick="selectPaymentMethod('yoomoney')">
-                    <span class="method-icon">💰</span>
-                    <span class="method-name">ЮMoney</span>
-                </div>
-            </div>
-
+        <div class="compact-payment-form" style="text-align: center;">
+            <!-- Только карта, без выбора методов оплаты -->
+            
             <!-- Компактная форма карты -->
-            <div id="cardForm" class="card-form">
+            <div id="cardForm" class="card-form" style="max-width: 400px; margin: 0 auto;">
                 <div class="form-group-compact">
                     <label>Номер карты</label>
                     <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
@@ -97,27 +87,27 @@
             </div>
 
             <!-- Компактная сводка заказа -->
-            <div class="order-summary-compact">
+            <div class="order-summary-compact" style="max-width: 400px; margin: 0 auto 1.5rem;">
                 <div class="order-line-compact">
                     <span>Курс:</span>
-                    <span id="summaryCourseName">Fullstack-разработка</span>
+                    <span id="summaryCourseName">Мобильная разработка</span>
                 </div>
                 <div class="order-line-compact">
                     <span>Сумма:</span>
-                    <span id="finalAmount">25 000₽</span>
+                    <span id="finalAmount">22 000₽</span>
                 </div>
                 <div class="order-total-compact">
                     <span>Итого:</span>
-                    <span id="totalAmount">25 000₽</span>
+                    <span id="totalAmount">22 000₽</span>
                 </div>
             </div>
 
-            <button class="pay-now-btn-compact" onclick="processPayment()">
+            <button class="pay-now-btn-compact" onclick="processPayment()" style="max-width: 400px; margin: 0 auto;">
                 <span class="btn-text">💳 Оплатить</span>
-                <span class="btn-amount" id="paymentAmount">25 000₽</span>
+                <span class="btn-amount" id="paymentAmount">22 000₽</span>
             </button>
 
-            <div class="payment-security-compact">
+            <div class="payment-security-compact" style="justify-content: center;">
                 <span class="lock-icon">🔒</span>
                 <span>Безопасная оплата</span>
             </div>
