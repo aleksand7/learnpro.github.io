@@ -104,7 +104,6 @@ const coursesData = [
 
 // Текущий выбранный курс для оплаты
 let selectedCourse = null;
-let selectedPaymentMethod = 'card';
 
 // Загрузка каталога курсов
 function loadCoursesCatalog() {
@@ -184,11 +183,6 @@ function showPaymentModal(courseId) {
     document.getElementById('cardCvc').value = '';
     document.getElementById('cardHolder').value = '';
     
-    // Сбрасываем выбранный метод оплаты
-    selectedPaymentMethod = 'card';
-    document.querySelectorAll('.payment-method-compact').forEach(m => m.classList.remove('selected'));
-    document.querySelector('.payment-method-compact[data-method="card"]').classList.add('selected');
-    
     // Показываем модальное окно
     document.getElementById('paymentModal').style.display = 'block';
 }
@@ -197,13 +191,6 @@ function showPaymentModal(courseId) {
 function closePaymentModal() {
     document.getElementById('paymentModal').style.display = 'none';
     selectedCourse = null;
-}
-
-// Выбор способа оплаты
-function selectPaymentMethod(method) {
-    selectedPaymentMethod = method;
-    document.querySelectorAll('.payment-method-compact').forEach(m => m.classList.remove('selected'));
-    event.target.closest('.payment-method-compact').classList.add('selected');
 }
 
 // Обработка оплаты с анимацией
@@ -269,8 +256,7 @@ function showPaymentError(message) {
     setTimeout(() => {
         payBtn.classList.remove('error');
         payBtn.innerHTML = `
-            <span class="btn-icon">💳</span>
-            <span class="btn-text">Оплатить</span>
+            <span class="btn-text">💳 Оплатить</span>
             <span class="btn-amount">${selectedCourse.price.toLocaleString()}₽</span>
         `;
     }, 2000);
@@ -326,6 +312,7 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
+
 // Плавная фильтрация курсов
 function filterCourses(category) {
     const cards = document.querySelectorAll('.catalog-course-card');
