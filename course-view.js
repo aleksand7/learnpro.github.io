@@ -644,30 +644,30 @@ pod install</code>
                 {
                     question: "Какой компонент используется для создания списка в React Native?",
                     options: [
-                        "<List>",
-                        "<FlatList>",
-                        "<ScrollList>",
-                        "<ListView>"
+                        "List",
+                        "FlatList",
+                        "ScrollList",
+                        "ListView"
                     ],
                     correct: 1
                 },
                 {
                     question: "Какой компонент используется для отображения текста в React Native?",
                     options: [
-                        "<div>",
-                        "<p>",
-                        "<Text>",
-                        "<span>"
+                        "div",
+                        "p",
+                        "Text",
+                        "span"
                     ],
                     correct: 2
                 },
                 {
                     question: "Какой компонент используется для скролла в React Native?",
                     options: [
-                        "<ScrollView>",
-                        "<View>",
-                        "<Text>",
-                        "<Image>"
+                        "ScrollView",
+                        "View",
+                        "Text",
+                        "Image"
                     ],
                     correct: 0
                 },
@@ -724,10 +724,10 @@ pod install</code>
                 {
                     question: "Какой компонент используется для кнопки?",
                     options: [
-                        "<Button>",
-                        "<Click>",
-                        "<Press>",
-                        "<Tap>"
+                        "Button",
+                        "Click",
+                        "Press",
+                        "Tap"
                     ],
                     correct: 0
                 },
