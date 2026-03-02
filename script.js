@@ -348,7 +348,19 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-
+// Обработка изменения ориентации экрана
+window.addEventListener('orientationchange', function() {
+    setTimeout(function() {
+        // Пересчет позиций модальных окон
+        const modals = document.querySelectorAll('.modal[style*="display: block"]');
+        modals.forEach(modal => {
+            const content = modal.querySelector('.modal-content');
+            if (content) {
+                content.style.margin = window.innerHeight > 500 ? '5% auto' : '2% auto';
+            }
+        });
+    }, 100);
+});
 
 
 
