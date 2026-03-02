@@ -3454,3 +3454,617 @@ body {
 .lock-icon {
     font-size: 1rem;
 }
+/* ===== ПОЛНАЯ АДАПТИВНОСТЬ ДЛЯ ВСЕХ УСТРОЙСТВ ===== */
+
+/* Большие планшеты (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+    .container {
+        padding: 0 20px;
+        max-width: 100%;
+    }
+    
+    .hero h1 {
+        font-size: 3rem;
+    }
+    
+    .courses-grid,
+    .user-courses-grid,
+    .course-catalog {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px;
+    }
+    
+    .course-card,
+    .user-course-card,
+    .catalog-course-card {
+        padding: 25px;
+    }
+}
+
+/* Планшеты и большие телефоны (480px - 768px) */
+@media screen and (max-width: 768px) {
+    /* Навигация */
+    .nav {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 0;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 15px;
+    }
+    
+    .nav-links li {
+        margin: 0;
+    }
+    
+    .nav-links a {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    /* Hero секция */
+    .hero {
+        padding: 150px 0 80px;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+        padding: 0 20px;
+    }
+    
+    .cta-btn {
+        padding: 15px 30px;
+        font-size: 1rem;
+    }
+    
+    /* Сетки */
+    .courses-grid,
+    .user-courses-grid,
+    .course-catalog,
+    .features-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+    
+    /* Карточки */
+    .course-card,
+    .user-course-card,
+    .catalog-course-card,
+    .feature {
+        padding: 25px;
+    }
+    
+    .course-icon {
+        font-size: 3rem;
+    }
+    
+    .course-price {
+        font-size: 2rem;
+    }
+    
+    /* Админ панель */
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr 1fr !important;
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    .mobile-hidden {
+        display: none;
+    }
+    
+    /* Кабинет пользователя */
+    .user-welcome {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .user-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+        margin: 0 auto;
+    }
+    
+    .user-info h1 {
+        font-size: 1.8rem;
+    }
+    
+    /* Профиль */
+    .profile-card {
+        padding: 25px;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+    
+    /* Курс детально */
+    .course-header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .course-header-icon {
+        font-size: 4rem;
+    }
+    
+    .course-meta {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .course-content {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .lessons-section {
+        max-height: none;
+    }
+    
+    .lesson-item {
+        padding: 15px;
+    }
+    
+    /* Модальные окна */
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 25px;
+    }
+    
+    .payment-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .card-form {
+        padding: 20px;
+    }
+    
+    .form-row-compact {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Сертификат */
+    .certificate-full {
+        padding: 20px;
+    }
+    
+    .student-name-full {
+        font-size: 2rem;
+    }
+    
+    .course-name-full {
+        font-size: 1.5rem;
+    }
+    
+    .certificate-date-full {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .certificate-footer-full {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+/* Маленькие телефоны (до 480px) */
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    /* Заголовки */
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    /* Карточки */
+    .course-card,
+    .user-course-card,
+    .catalog-course-card {
+        padding: 20px;
+    }
+    
+    .course-icon {
+        font-size: 2.5rem;
+    }
+    
+    .course-card h3 {
+        font-size: 1.2rem;
+    }
+    
+    .course-price {
+        font-size: 1.8rem;
+    }
+    
+    /* Кнопки */
+    .course-btn,
+    .subscribe-btn,
+    .continue-btn,
+    .start-btn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+    
+    .course-card-actions {
+        flex-direction: column;
+    }
+    
+    /* Админ панель */
+    .admin-stats {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .admin-actions {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        width: 100%;
+    }
+    
+    .search-input {
+        padding: 12px 15px;
+    }
+    
+    /* Модальные окна */
+    .modal-content {
+        padding: 20px;
+    }
+    
+    .modal h2 {
+        font-size: 1.5rem;
+    }
+    
+    .payment-price {
+        font-size: 1.8rem;
+    }
+    
+    .pay-now-btn-compact {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-amount {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .payment-methods-compact {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Таблицы */
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+    
+    .table-header {
+        display: none;
+    }
+    
+    .table-row {
+        position: relative;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .table-row > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .table-row > div::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #64748b;
+        margin-right: 10px;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    /* Квиз */
+    .quiz-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .quiz-prev-btn,
+    .quiz-next-btn,
+    .quiz-submit-btn {
+        width: 100%;
+    }
+    
+    .quiz-counter {
+        order: -1;
+        margin-bottom: 10px;
+    }
+    
+    .quiz-option {
+        padding: 12px !important;
+    }
+    
+    /* Кнопка наверх */
+    .scroll-to-top-btn {
+        bottom: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+}
+
+/* Очень маленькие телефоны (до 360px) */
+@media screen and (max-width: 360px) {
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+    
+    .course-card {
+        padding: 15px;
+    }
+    
+    .course-icon {
+        font-size: 2rem;
+    }
+    
+    .course-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .course-features li {
+        font-size: 0.8rem;
+    }
+    
+    .price {
+        font-size: 1.5rem;
+    }
+    
+    .modal-content {
+        padding: 15px;
+    }
+    
+    .form-group input {
+        padding: 10px 12px;
+    }
+}
+
+/* Горизонтальная ориентация на телефонах */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .modal-content {
+        margin: 2% auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .hero {
+        padding: 120px 0 60px;
+    }
+    
+    .courses-grid,
+    .user-courses-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Улучшения для тач-устройств */
+@media (hover: none) and (pointer: coarse) {
+    .nav-links a,
+    .course-btn,
+    .subscribe-btn,
+    .filter-btn,
+    .action-btn,
+    .delete-btn {
+        padding: 12px 15px;
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .lesson-item {
+        padding: 15px;
+        margin: 5px 0;
+    }
+    
+    .quiz-option {
+        padding: 15px !important;
+    }
+    
+    .quiz-option input[type="radio"] {
+        width: 22px;
+        height: 22px;
+    }
+}
+/* ===== ПЛАВНЫЕ ПЕРЕХОДЫ ДЛЯ АДАПТИВНОСТИ ===== */
+* {
+    transition: all 0.2s ease-in-out;
+}
+
+.container,
+.grid,
+.flex,
+.card,
+.button,
+.input {
+    transition: width 0.3s ease, height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+/* Улучшенный скролл на мобильных */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 3px;
+        height: 3px;
+    }
+    
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .modal-content {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Предотвращение зума на мобильных */
+@media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Оптимизация изображений */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Улучшенная читаемость */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    p {
+        margin-bottom: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+    }
+    
+    h3 {
+        font-size: 1.2rem;
+        line-height: 1.4;
+    }
+}
+/* ===== ПЛАВНЫЕ ПЕРЕХОДЫ ДЛЯ АДАПТИВНОСТИ ===== */
+* {
+    transition: all 0.2s ease-in-out;
+}
+
+.container,
+.grid,
+.flex,
+.card,
+.button,
+.input {
+    transition: width 0.3s ease, height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+/* Улучшенный скролл на мобильных */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 3px;
+        height: 3px;
+    }
+    
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .modal-content {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Предотвращение зума на мобильных */
+@media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Оптимизация изображений */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Улучшенная читаемость */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    p {
+        margin-bottom: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+    }
+    
+    h3 {
+        font-size: 1.2rem;
+        line-height: 1.4;
+    }
+}
+/* Оптимизация шрифтов */
+@media screen and (max-width: 768px) {
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+    
+    .logo h2 {
+        font-size: 1.5rem;
+    }
+    
+    .nav-links a {
+        font-size: 13px;
+    }
+}
