@@ -2,9 +2,277 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог курсов - LearnPro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Fullstack-разработка - LearnPro</title>
     <link rel="stylesheet" href="style.css">
+</head>
+    <style>
+        .course-view {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            min-height: 100vh;
+            margin-top: 70px;
+        }
+
+        .course-header {
+            background: var(--gradient);
+            color: white;
+            padding: 3rem;
+            border-radius: 32px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+        }
+
+        .course-header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .course-header-icon {
+            font-size: 5rem;
+            background: rgba(255,255,255,0.2);
+            padding: 1.5rem;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+        }
+
+        .course-header-info h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .course-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .course-progress-large {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-percent-large {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .progress-bar-large {
+            height: 12px;
+            background: var(--gray-light);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill-large {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .course-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .lessons-section {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--gray-light);
+            transition: all 0.3s;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+
+        .lesson-item:hover {
+            background: var(--gray-light);
+            transform: translateX(5px);
+        }
+
+        .lesson-item.completed {
+            opacity: 0.8;
+        }
+
+        .lesson-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .lesson-info {
+            flex: 1;
+        }
+
+        .lesson-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .lesson-duration {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .lesson-status {
+            margin-left: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .current-lesson {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .current-lesson .lesson-title {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .course-sidebar {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .teacher-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .teacher-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .resources-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .resources-list li {
+            padding: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            border-bottom: 1px dashed var(--gray-light);
+        }
+
+        .complete-lesson-btn {
+            width: 100%;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+        }
+
+        .complete-lesson-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .course-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .course-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .course-meta {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -15,256 +283,165 @@
             </div>
             <ul class="nav-links">
                 <li><a href="dashboard.html">📊 Мой кабинет</a></li>
-                <li><a href="courses.html" class="active">🎓 Все курсы</a></li>
-                <li><a href="#profile">👤 Профиль</a></li>
-                <li><a href="#" class="logout-btn" onclick="logout()">🚪 Выйти</a></li>
+                <li><a href="courses.html">🎓 Все курсы</a></li>
+                <li><a href="#" onclick="logout()">🚪 Выйти</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Courses Page -->
-    <section class="courses-page">
+    <!-- Course View -->
+    <section class="course-view">
         <div class="container">
-            <div class="hero-content">
-                <h1>Выберите свой путь в IT</h1>
-                <p>Профессиональные курсы с трудоустройством</p>
-            </div>
+            <a href="dashboard.html" class="back-btn">
+                ← Вернуться в кабинет
+            </a>
 
-            <!-- Фильтры -->
-            <div class="courses-filter">
-                <button class="filter-btn active" onclick="filterCourses('all')">Все курсы</button>
-                <button class="filter-btn" onclick="filterCourses('programming')">Программирование</button>
-                <button class="filter-btn" onclick="filterCourses('design')">Дизайн</button>
-                <button class="filter-btn" onclick="filterCourses('data')">Data Science</button>
-                <button class="filter-btn" onclick="filterCourses('mobile')">Мобильная разработка</button>
-            </div>
-
-            <!-- Каталог курсов -->
-            <div class="course-catalog" id="courseCatalog">
-                <!-- Курсы загружаются через JavaScript -->
+            <div id="courseContainer">
+                <!-- Данные загружаются через JavaScript -->
             </div>
         </div>
     </section>
 
-<!-- Payment Modal -->
-<div id="paymentModal" class="modal payment-modal">
-    <div class="modal-content compact-payment">
-        <span class="close" onclick="closePaymentModal()">&times;</span>
-        
-        <div class="payment-header">
-            <div class="course-icon-small">💻</div>
-            <div class="payment-course-info">
-                <h3 id="paymentCourseTitle">Мобильная разработка</h3>
-                <div class="payment-price" id="paymentCoursePrice">22 000₽</div>
+    <script src="course-view.js"></script>
+    <!-- Quiz Section -->
+<div class="quiz-section" id="quizSection" style="display: none;">
+    <div class="quiz-header">
+        <h2>📝 Итоговый тест</h2>
+        <p>Проверьте свои знания перед получением сертификата</p>
+    </div>
+    
+    <div class="quiz-progress">
+        <div class="quiz-progress-bar" id="quizProgressBar"></div>
+    </div>
+    
+    <div class="quiz-question" id="quizQuestion">
+        <!-- Вопросы загружаются через JavaScript -->
+    </div>
+    
+    <div class="quiz-actions">
+        <button class="quiz-prev-btn" id="quizPrevBtn" onclick="prevQuestion()">← Назад</button>
+        <span class="quiz-counter" id="quizCounter">1/5</span>
+        <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuestion()">Далее →</button>
+        <button class="quiz-submit-btn" id="quizSubmitBtn" onclick="submitQuiz()" style="display: none;">📤 Отправить</button>
+    </div>
+    
+    <div class="quiz-result" id="quizResult"></div>
+</div>
+
+<!-- Certificate Modal -->
+<div id="certificateModal" class="modal" style="display: none;">
+    <div class="modal-content certificate-modal">
+        <span class="close" onclick="closeCertificateModal()">&times;</span>
+        <div class="certificate">
+            <div class="certificate-header">
+                <div class="certificate-icon">🎓</div>
+                <h2>Сертификат об окончании</h2>
+            </div>
+            <div class="certificate-body">
+                <p class="certificate-text">Настоящий сертификат подтверждает, что</p>
+                <h3 class="student-name" id="certificateStudentName">Иван Иванов</h3>
+                <p class="certificate-text">успешно завершил(а) курс</p>
+                <h2 class="course-name" id="certificateCourseName">Fullstack-разработка</h2>
+                <div class="certificate-date">
+                    <span>Дата: <span id="certificateDate">15.02.2026</span></span>
+                    <span>№ <span id="certificateNumber">LRN-2026-0001</span></span>
+                </div>
+            </div>
+            <div class="certificate-footer">
+                <div class="signature">
+                    <p>____________________</p>
+                    <p>Директор LearnPro</p>
+                </div>
+                <div class="certificate-seal">✅</div>
             </div>
         </div>
-
-        <div class="compact-payment-form" style="text-align: center;">
-            <!-- Только карта, без выбора методов оплаты -->
-            
-            <!-- Компактная форма карты -->
-            <div id="cardForm" class="card-form" style="max-width: 400px; margin: 0 auto;">
-                <div class="form-group-compact">
-                    <label>Номер карты</label>
-                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
-                </div>
-
-                <div class="form-row-compact">
-                    <div class="form-group-compact">
-                        <label>Срок действия</label>
-                        <input type="text" id="cardExpiry" placeholder="ММ/ГГ" maxlength="5">
-                    </div>
-                    <div class="form-group-compact">
-                        <label>CVC</label>
-                        <input type="text" id="cardCvc" placeholder="123" maxlength="3">
-                    </div>
-                </div>
-
-                <div class="form-group-compact">
-                    <label>Имя владельца</label>
-                    <input type="text" id="cardHolder" placeholder="IVAN IVANOV">
+        <div class="certificate-actions">
+            <button class="download-certificate-btn" onclick="downloadCertificate()">📥 Скачать сертификат</button>
+            <button class="share-certificate-btn" onclick="shareCertificate()">📤 Поделиться</button>
+        </div>
+    </div>
+</div>
+<!-- Certificate Modal -->
+<div id="certificateModal" class="modal" style="display: none;">
+    <div class="modal-content certificate-modal">
+        <span class="close" onclick="closeCertificateModal()">&times;</span>
+        <div class="certificate">
+            <div class="certificate-header">
+                <div class="certificate-icon">🎓</div>
+                <h2>Сертификат об окончании</h2>
+            </div>
+            <div class="certificate-body">
+                <p class="certificate-text">Настоящий сертификат подтверждает, что</p>
+                <h3 class="student-name" id="certificateStudentName">Иван Иванов</h3>
+                <p class="certificate-text">успешно завершил(а) курс</p>
+                <h2 class="course-name" id="certificateCourseName">Fullstack-разработка</h2>
+                <div class="certificate-date">
+                    <span>Дата: <span id="certificateDate">15.02.2026</span></span>
+                    <span>№ <span id="certificateNumber">LRN-2026-0001</span></span>
                 </div>
             </div>
-
-            <!-- Компактная сводка заказа -->
-            <div class="order-summary-compact" style="max-width: 400px; margin: 0 auto 1.5rem;">
-                <div class="order-line-compact">
-                    <span>Курс:</span>
-                    <span id="summaryCourseName">Мобильная разработка</span>
+            <div class="certificate-footer">
+                <div class="signature">
+                    <p>____________________</p>
+                    <p>Директор LearnPro</p>
                 </div>
-                <div class="order-line-compact">
-                    <span>Сумма:</span>
-                    <span id="finalAmount">22 000₽</span>
-                </div>
-                <div class="order-total-compact">
-                    <span>Итого:</span>
-                    <span id="totalAmount">22 000₽</span>
-                </div>
+                <div class="certificate-seal">✅</div>
             </div>
-
-            <button class="pay-now-btn-compact" onclick="processPayment()" style="max-width: 400px; margin: 0 auto;">
-                <span class="btn-text">💳 Оплатить</span>
-                <span class="btn-amount" id="paymentAmount">22 000₽</span>
-            </button>
-
-            <div class="payment-security-compact" style="justify-content: center;">
-                <span class="lock-icon">🔒</span>
-                <span>Безопасная оплата</span>
-            </div>
+        </div>
+        <div class="certificate-actions">
+            <button class="download-certificate-btn" onclick="downloadCertificate()">📥 Скачать сертификат</button>
+            <button class="share-certificate-btn" onclick="shareCertificate()">📤 Поделиться</button>
         </div>
     </div>
 </div>
 
-    <script src="courses.js"></script>
-</body>
-    <!-- Добавьте этот код перед закрывающим тегом </body> -->
-<!-- Кнопка "Наверх" -->
-<button id="scrollToTop" class="scroll-to-top-btn" title="Наверх">
-    ↑
-</button>
-
-<script>
-// ==================== КНОПКА "НАВЕРХ" ====================
-
-// Создаем кнопку через JavaScript
-function createScrollToTopButton() {
-    const scrollBtn = document.getElementById('scrollToTop');
-    
-    // Показываем/скрываем кнопку при скролле
-    window.addEventListener('scroll', function() {
-        if (window.pageYOffset > 300) {
-            scrollBtn.style.display = 'block';
-            setTimeout(() => scrollBtn.style.opacity = '1', 10);
-        } else {
-            scrollBtn.style.opacity = '0';
-            setTimeout(() => scrollBtn.style.display = 'none', 300);
-        }
-    });
-    
-    // Плавный скролл наверх
-    scrollBtn.addEventListener('click', function() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-}
-
-// ==================== ПЕРЕЗАГРУЗКА С СОХРАНЕНИЕМ ПОЗИЦИИ ====================
-
-// Сохраняем позицию скролла перед перезагрузкой
-function saveScrollPosition() {
-    sessionStorage.setItem('scrollPosition', window.pageYOffset);
-    sessionStorage.setItem('currentPage', window.location.pathname);
-}
-
-// Восстанавливаем позицию скролла после перезагрузки
-function restoreScrollPosition() {
-    const savedPosition = sessionStorage.getItem('scrollPosition');
-    const savedPage = sessionStorage.getItem('currentPage');
-    
-    if (savedPosition && savedPage === window.location.pathname) {
-        window.scrollTo(0, parseInt(savedPosition));
-        // Очищаем сохраненную позицию после восстановления
-        sessionStorage.removeItem('scrollPosition');
-        sessionStorage.removeItem('currentPage');
-    }
-}
-
-// Обработчик для логотипа
-function setupLogoReload() {
-    const logos = document.querySelectorAll('.logo h2, .logo');
-    
-    logos.forEach(logo => {
-        logo.style.cursor = 'pointer';
-        logo.addEventListener('click', function(e) {
-            e.preventDefault();
-            saveScrollPosition();
-            window.location.reload();
-        });
-    });
-}
-
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
-
-document.addEventListener('DOMContentLoaded', function() {
-    createScrollToTopButton();
-    setupLogoReload();
-    restoreScrollPosition();
-    
-    // Сохраняем позицию при клике на внутренние ссылки
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            saveScrollPosition();
-        });
-    });
-});
-
-// Сохраняем позицию перед перезагрузкой страницы
-window.addEventListener('beforeunload', saveScrollPosition);
-</script>
-
 <style>
-/* Стили для кнопки "Наверх" */
-.scroll-to-top-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background: var(--gradient);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: var(--shadow-lg);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    display: none;
-    z-index: 1000;
-}
-
-.scroll-to-top-btn:hover {
-    transform: translateY(-5px) scale(1.1);
-    box-shadow: var(--shadow-xl);
-}
-
-.scroll-to-top-btn:active {
-    transform: translateY(-2px) scale(1.05);
-}
-
-/* Анимация появления */
-.scroll-to-top-btn.show {
-    opacity: 1;
-    display: block;
-}
-
-/* Адаптивность для мобильных */
-@media (max-width: 768px) {
-    .scroll-to-top-btn {
-        bottom: 20px;
-        right: 20px;
-        width: 45px;
-        height: 45px;
-        font-size: 1.3rem;
+    @keyframes certificateZoom {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
-}
-
-/* Дополнительные стили для логотипа */
-.logo h2 {
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.logo h2:hover {
-    transform: scale(1.05);
-}
-
-.logo h2:active {
-    transform: scale(0.95);
-}
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
 </style>
-</html>
+<!-- Подключаем jsPDF -->
+<!-- Подключаем jsPDF и html2canvas для PDF сертификатов -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+</html>
