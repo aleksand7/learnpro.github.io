@@ -10,7 +10,6 @@ function loadUsers() {
     updateStatistics(users);
 }
 
-// Display users in table
 function displayUsers(users) {
     const usersList = document.getElementById('usersList');
     
@@ -32,25 +31,25 @@ function displayUsers(users) {
         
         return `
             <div class="table-row">
-                <div class="user-info">
+                <div data-label="Пользователь" class="user-info">
                     <div class="user-avatar-small">${initials}</div>
                     <div>
                         <strong>${user.firstName} ${user.lastName}</strong>
                         <div style="font-size: 0.8rem; color: var(--gray);">@${user.login}</div>
                     </div>
                 </div>
-                <div>
+                <div data-label="Контакт">
                     <div>${user.email}</div>
                     <div style="font-size: 0.8rem; color: var(--gray);">${user.login}</div>
                 </div>
-                <div class="mobile-hidden">
+                <div data-label="Курсы" class="mobile-hidden">
                     <span class="courses-count">${coursesCount} курсов</span>
                 </div>
-                <div class="mobile-hidden">${registrationDate}</div>
-                <div>
+                <div data-label="Дата регистрации" class="mobile-hidden">${registrationDate}</div>
+                <div data-label="Статус">
                     <span style="color: var(--success); font-weight: 600;">✅ Активен</span>
                 </div>
-                <div>
+                <div data-label="Действия">
                     <button class="delete-btn" onclick="showDeleteUserModal('${user.email}')">
                         🗑️
                     </button>
