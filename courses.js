@@ -184,13 +184,25 @@ function showPaymentModal(courseId) {
     document.getElementById('cardHolder').value = '';
     
     // Показываем модальное окно
-    document.getElementById('paymentModal').style.display = 'block';
+    const modal = document.getElementById('paymentModal');
+    modal.style.display = 'block';
+    
+    // Блокируем скролл body
+    document.body.style.overflow = 'hidden';
+    
+    // На телефонах добавляем отступ сверху
+    if (window.innerWidth <= 768) {
+        modal.querySelector('.modal-content').style.marginTop = '0';
+    }
 }
 
 // Закрыть модальное окно оплаты
 function closePaymentModal() {
     document.getElementById('paymentModal').style.display = 'none';
     selectedCourse = null;
+    
+    // Восстанавливаем скролл body
+    document.body.style.overflow = '';
 }
 
 // Обработка оплаты с анимацией
@@ -343,3 +355,4 @@ function filterCourses(category) {
         }
     });
 }
+
