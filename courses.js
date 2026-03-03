@@ -355,4 +355,49 @@ function filterCourses(category) {
         }
     });
 }
+// Автоматическое форматирование номера карты
+document.addEventListener('DOMContentLoaded', function() {
+    const cardNumberInput = document.getElementById('cardNumber');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 16) value = value.slice(0, 16);
+            
+            // Добавляем пробелы после каждых 4 цифр
+            value = value.replace(/(\d{4})/g, '$1 ').trim();
+            e.target.value = value;
+        });
+    }
+    
+    const cardExpiryInput = document.getElementById('cardExpiry');
+    if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 4) value = value.slice(0, 4);
+            
+            // Добавляем слеш после месяца
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            e.target.value = value;
+        });
+    }
+    
+    const cardCvcInput = document.getElementById('cardCvc');
+    if (cardCvcInput) {
+        cardCvcInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 3) value = value.slice(0, 3);
+            e.target.value = value;
+        });
+    }
+    
+    const cardHolderInput = document.getElementById('cardHolder');
+    if (cardHolderInput) {
+        cardHolderInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+    }
+});
+
 
