@@ -3053,7 +3053,7 @@ function previewCertificate(courseId) {
     disableBodyScroll();
 }
 
-// Функция скачивания PDF сертификата - ТОЧНАЯ КОПИЯ С ФОТО
+// Функция скачивания PDF сертификата - ТОЧНАЯ КОПИЯ С ПОСЛЕДНЕГО ФОТО
 async function downloadCertificatePDF(courseId) {
     const course = lessonsData[courseId];
     const user = getCurrentUser();
@@ -3079,9 +3079,7 @@ async function downloadCertificatePDF(courseId) {
         
         const today = new Date();
         const dateStr = today.toLocaleDateString('ru-RU');
-        
-        // Имя заглавными буквами как на фото
-        const fullName = `${user.firstName} ${user.lastName}`.toUpperCase();
+        const certNumber = `LRN-${today.getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
         
         // Создаем контейнер
         const container = document.createElement('div');
@@ -3094,53 +3092,149 @@ async function downloadCertificatePDF(courseId) {
         container.style.opacity = '0';
         container.style.pointerEvents = 'none';
         
-        // ТОЧНАЯ КОПИЯ С ВАШЕГО ФОТО
+        // ТОЧНАЯ КОПИЯ С ПОСЛЕДНЕГО ФОТО
         container.innerHTML = `
             <div style="
                 width: 800px;
-                padding: 60px 40px;
+                padding: 50px;
                 background: white;
                 font-family: 'Times New Roman', Times, serif;
-                text-align: center;
+                border: 2px solid #8b5cf6;
+                position: relative;
             ">
-                <h1 style="
-                    font-size: 32px;
-                    font-weight: bold;
-                    margin: 0 0 30px 0;
-                    letter-spacing: 1px;
-                ">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h1>
+                <!-- Заголовок -->
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="
+                        font-size: 24px;
+                        font-weight: bold;
+                        margin: 0 0 10px 0;
+                        color: #000;
+                    ">Сертификат об окончании</h1>
+                    
+                    <h2 style="
+                        font-size: 28px;
+                        font-weight: bold;
+                        margin: 0 0 20px 0;
+                        color: #8b5cf6;
+                        letter-spacing: 1px;
+                    ">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h2>
+                </div>
                 
-                <p style="
-                    font-size: 18px;
-                    margin: 40px 0 20px 0;
-                    color: #333;
-                ">Настоящий сертификат подтверждает, что</p>
+                <!-- Основной текст -->
+                <div style="text-align: center; margin: 30px 0;">
+                    <p style="
+                        font-size: 18px;
+                        margin: 0 0 20px 0;
+                        color: #333;
+                    ">Настоящий сертификат подтверждает, что</p>
+                    
+                    <div style="
+                        border-top: 2px dashed #8b5cf6;
+                        border-bottom: 2px dashed #8b5cf6;
+                        padding: 20px 0;
+                        margin: 30px 0;
+                    ">
+                        <h3 style="
+                            font-size: 36px;
+                            font-weight: bold;
+                            margin: 0 0 10px 0;
+                            color: #000;
+                        ">${user.firstName} ${user.lastName}</h3>
+                        
+                        <p style="
+                            font-size: 18px;
+                            margin: 10px 0;
+                            color: #333;
+                        ">успешно завершил(а) курс</p>
+                        
+                        <h4 style="
+                            font-size: 28px;
+                            font-weight: bold;
+                            margin: 20px 0 0 0;
+                            color: #000;
+                        ">${course.title}</h4>
+                    </div>
+                    
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        gap: 30px;
+                        margin: 30px 0;
+                        font-size: 18px;
+                    ">
+                        <span><strong>Дата:</strong> ${dateStr}</span>
+                        <span><strong>№</strong> ${certNumber}</span>
+                    </div>
+                </div>
                 
-                <h2 style="
-                    font-size: 48px;
-                    font-weight: bold;
-                    margin: 30px 0;
-                    color: #000;
-                ">${fullName}</h2>
-                
-                <p style="
-                    font-size: 18px;
-                    margin: 20px 0;
-                    color: #333;
-                ">успешно завершил(а) курс</p>
-                
-                <h3 style="
-                    font-size: 28px;
-                    font-weight: bold;
-                    margin: 40px 0;
-                    color: #000;
-                ">${course.title}</h3>
-                
-                <p style="
-                    font-size: 18px;
-                    margin: 50px 0 0 0;
-                    color: #333;
-                ">Дата: ${dateStr}</p>
+                <!-- Подписи -->
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top: 40px;
+                ">
+                    <!-- Левая подпись -->
+                    <div style="text-align: center; width: 200px;">
+                        <div style="
+                            width: 100%;
+                            height: 1px;
+                            background: #000;
+                            margin-bottom: 5px;
+                        "></div>
+                        <p style="
+                            font-size: 18px;
+                            font-weight: bold;
+                            margin: 0 0 3px 0;
+                        ">А. Иванов</p>
+                        <p style="
+                            font-size: 14px;
+                            color: #666;
+                            margin: 0;
+                        ">Директор LearnPro</p>
+                    </div>
+                    
+                    <!-- Центральная печать -->
+                    <div style="text-align: center; width: 100px;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-size: 30px;
+                            margin: 0 auto 5px;
+                        ">✓</div>
+                        <p style="
+                            font-size: 12px;
+                            color: #8b5cf6;
+                            margin: 0;
+                        ">Официально</p>
+                    </div>
+                    
+                    <!-- Правая подпись -->
+                    <div style="text-align: center; width: 200px;">
+                        <div style="
+                            width: 100%;
+                            height: 1px;
+                            background: #000;
+                            margin-bottom: 5px;
+                        "></div>
+                        <p style="
+                            font-size: 18px;
+                            font-weight: bold;
+                            margin: 0 0 3px 0;
+                        ">М. Петрова</p>
+                        <p style="
+                            font-size: 14px;
+                            color: #666;
+                            margin: 0;
+                        ">Академический директор</p>
+                    </div>
+                </div>
             </div>
         `;
         
