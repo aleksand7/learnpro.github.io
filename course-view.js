@@ -3053,7 +3053,7 @@ function previewCertificate(courseId) {
     disableBodyScroll();
 }
 
-// Функция скачивания PDF сертификата - точная копия с фото
+// Функция скачивания PDF сертификата - ТОЧНАЯ КОПИЯ С ФОТО
 async function downloadCertificatePDF(courseId) {
     const course = lessonsData[courseId];
     const user = getCurrentUser();
@@ -3075,421 +3075,105 @@ async function downloadCertificatePDF(courseId) {
             await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
         }
         
-        // Даем время на инициализацию
         await new Promise(resolve => setTimeout(resolve, 300));
         
         const today = new Date();
         const dateStr = today.toLocaleDateString('ru-RU');
-        const certNumber = `LRN-${today.getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
         
-        // Создаем контейнер для сертификата
+        // Имя заглавными буквами как на фото
+        const fullName = `${user.firstName} ${user.lastName}`.toUpperCase();
+        
+        // Создаем контейнер
         const container = document.createElement('div');
         container.style.position = 'fixed';
         container.style.top = '0';
         container.style.left = '0';
         container.style.width = '800px';
-        container.style.height = '600px';
         container.style.backgroundColor = '#ffffff';
         container.style.zIndex = '-1000';
         container.style.opacity = '0';
         container.style.pointerEvents = 'none';
         
-        // Точная копия сертификата с фото
+        // ТОЧНАЯ КОПИЯ С ВАШЕГО ФОТО
         container.innerHTML = `
             <div style="
-                width: 100%;
-                height: 100%;
-                padding: 50px 60px;
+                width: 800px;
+                padding: 60px 40px;
                 background: white;
-                box-sizing: border-box;
-                display: flex;
-                flex-direction: column;
-                font-family: 'Arial', 'Helvetica', sans-serif;
-                position: relative;
+                font-family: 'Times New Roman', Times, serif;
+                text-align: center;
             ">
-                <!-- Заголовок -->
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="
-                        font-size: 36px;
-                        color: #000000;
-                        margin: 0 0 15px 0;
-                        font-weight: 800;
-                        letter-spacing: 1px;
-                        text-transform: uppercase;
-                    ">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h1>
-                    
-                    <div style="
-                        width: 100px;
-                        height: 3px;
-                        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-                        margin: 10px auto 0;
-                    "></div>
-                </div>
+                <h1 style="
+                    font-size: 32px;
+                    font-weight: bold;
+                    margin: 0 0 30px 0;
+                    letter-spacing: 1px;
+                ">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h1>
                 
-                <!-- Основной текст -->
-                <div style="flex: 1; text-align: center; margin-top: 20px;">
-                    <p style="
-                        font-size: 20px;
-                        color: #333333;
-                        margin: 0 0 30px 0;
-                        font-weight: normal;
-                    ">
-                        Настоящий сертификат подтверждает, что
-                    </p>
-                    
-                    <h2 style="
-                        font-size: 48px;
-                        color: #8b5cf6;
-                        margin: 20px 0 30px 0;
-                        font-weight: 800;
-                        line-height: 1.2;
-                    ">${user.firstName} ${user.lastName}</h2>
-                    
-                    <p style="
-                        font-size: 20px;
-                        color: #333333;
-                        margin: 0 0 30px 0;
-                        font-weight: normal;
-                    ">
-                        успешно завершил(а) курс
-                    </p>
-                    
-                    <h3 style="
-                        font-size: 32px;
-                        color: #000000;
-                        margin: 20px 0 40px 0;
-                        font-weight: 700;
-                    ">${course.title}</h3>
-                    
-                    <div style="
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        gap: 30px;
-                        margin: 30px 0;
-                        font-size: 18px;
-                        color: #333333;
-                    ">
-                        <span style="font-weight: 600;">Дата:</span>
-                        <span style="font-weight: normal;">${dateStr}</span>
-                        <span style="font-weight: 600; margin-left: 20px;">№</span>
-                        <span style="font-weight: normal;">${certNumber}</span>
-                    </div>
-                </div>
+                <p style="
+                    font-size: 18px;
+                    margin: 40px 0 20px 0;
+                    color: #333;
+                ">Настоящий сертификат подтверждает, что</p>
                 
-                <!-- Нижняя часть -->
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin-top: 20px;
-                    padding-top: 20px;
-                    border-top: 2px solid #f0f0f0;
-                ">
-                    <p style="
-                        font-size: 14px;
-                        color: #999999;
-                        margin: 0;
-                    ">
-                        LearnPro • Онлайн платформа для IT-профессий • learnpro.ru
-                    </p>
-                </div>
+                <h2 style="
+                    font-size: 48px;
+                    font-weight: bold;
+                    margin: 30px 0;
+                    color: #000;
+                ">${fullName}</h2>
+                
+                <p style="
+                    font-size: 18px;
+                    margin: 20px 0;
+                    color: #333;
+                ">успешно завершил(а) курс</p>
+                
+                <h3 style="
+                    font-size: 28px;
+                    font-weight: bold;
+                    margin: 40px 0;
+                    color: #000;
+                ">${course.title}</h3>
+                
+                <p style="
+                    font-size: 18px;
+                    margin: 50px 0 0 0;
+                    color: #333;
+                ">Дата: ${dateStr}</p>
             </div>
         `;
         
-        // Добавляем контейнер в DOM
         document.body.appendChild(container);
-        
-        // Ждем рендеринга
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Получаем элемент сертификата
         const certificateElement = container.firstElementChild;
         
-        if (!certificateElement) {
-            throw new Error('Элемент сертификата не создан');
-        }
-        
-        // Генерируем канвас
         const canvas = await html2canvas(certificateElement, {
             scale: 2,
             backgroundColor: '#ffffff',
-            logging: false,
-            allowTaint: false,
-            useCORS: true,
-            windowWidth: 800,
-            windowHeight: 600
+            logging: false
         });
         
         const imgData = canvas.toDataURL('image/png');
         
-        // Создаем PDF в альбомной ориентации
         const pdf = new jspdf.jsPDF({
             orientation: 'landscape',
             unit: 'px',
             format: [800, 600]
         });
         
-        // Добавляем изображение на всю страницу
         pdf.addImage(imgData, 'PNG', 0, 0, 800, 600);
         
-        // Очищаем имя файла от недопустимых символов
-        const safeFileName = `${user.lastName}_${user.firstName}_${course.title}`
-            .replace(/[^\wа-яА-ЯёЁ]/g, '_')
-            .replace(/_+/g, '_');
-            
+        const safeFileName = `${user.lastName}_${user.firstName}`.replace(/[^\wа-яА-Я]/g, '_');
         pdf.save(`LearnPro_${safeFileName}.pdf`);
         
-        // Удаляем временный контейнер
         document.body.removeChild(container);
-        
         showNotification('✅ PDF успешно скачан!', 'success');
         
     } catch (error) {
-        console.error('❌ Ошибка при создании PDF:', error);
-        showNotification('❌ Ошибка при создании PDF. Использую текстовый формат...', 'warning');
-        
-        // Запасной вариант - текстовый файл
-        setTimeout(() => downloadCertificateText(courseId), 500);
-    }
-}
-
-// Функция для предпросмотра сертификата (тоже обновляем под новый дизайн)
-function previewCertificate(courseId) {
-    const course = lessonsData[courseId];
-    const user = getCurrentUser();
-    
-    if (!course || !user) {
-        showNotification('Ошибка: данные не найдены', 'error');
-        return;
-    }
-    
-    disableBodyScroll();
-    
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 100000;
-        padding: 20px;
-    `;
-    
-    const today = new Date();
-    const dateStr = today.toLocaleDateString('ru-RU');
-    const certNumber = `LRN-${today.getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
-    
-    modal.innerHTML = `
-        <div style="
-            background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 900px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        ">
-            <div style="
-                background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-                padding: 1.5rem;
-                border-radius: 16px 16px 0 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                color: white;
-                position: sticky;
-                top: 0;
-                z-index: 10;
-            ">
-                <h2 style="font-size: 1.5rem;">🎓 Сертификат об окончании</h2>
-                <button onclick="closeCertificateModal(this)" style="
-                    background: rgba(255,255,255,0.2);
-                    border: none;
-                    color: white;
-                    font-size: 2rem;
-                    cursor: pointer;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: all 0.3s;
-                ">×</button>
-            </div>
-            
-            <div style="padding: 40px;">
-                <!-- Сертификат - точная копия с фото -->
-                <div style="
-                    width: 100%;
-                    padding: 50px 60px;
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-                    margin-bottom: 30px;
-                    font-family: 'Arial', 'Helvetica', sans-serif;
-                ">
-                    <!-- Заголовок -->
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="
-                            font-size: 36px;
-                            color: #000000;
-                            margin: 0 0 15px 0;
-                            font-weight: 800;
-                            letter-spacing: 1px;
-                            text-transform: uppercase;
-                        ">СЕРТИФИКАТ ОБ ОКОНЧАНИИ</h1>
-                        
-                        <div style="
-                            width: 100px;
-                            height: 3px;
-                            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-                            margin: 10px auto 0;
-                        "></div>
-                    </div>
-                    
-                    <!-- Основной текст -->
-                    <div style="text-align: center; margin: 30px 0;">
-                        <p style="
-                            font-size: 20px;
-                            color: #333333;
-                            margin: 0 0 30px 0;
-                            font-weight: normal;
-                        ">
-                            Настоящий сертификат подтверждает, что
-                        </p>
-                        
-                        <h2 style="
-                            font-size: 48px;
-                            color: #8b5cf6;
-                            margin: 20px 0 30px 0;
-                            font-weight: 800;
-                            line-height: 1.2;
-                        ">${user.firstName} ${user.lastName}</h2>
-                        
-                        <p style="
-                            font-size: 20px;
-                            color: #333333;
-                            margin: 0 0 30px 0;
-                            font-weight: normal;
-                        ">
-                            успешно завершил(а) курс
-                        </p>
-                        
-                        <h3 style="
-                            font-size: 32px;
-                            color: #000000;
-                            margin: 20px 0 40px 0;
-                            font-weight: 700;
-                        ">${course.title}</h3>
-                        
-                        <div style="
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            gap: 30px;
-                            margin: 30px 0;
-                            font-size: 18px;
-                            color: #333333;
-                        ">
-                            <span style="font-weight: 600;">Дата:</span>
-                            <span style="font-weight: normal;">${dateStr}</span>
-                            <span style="font-weight: 600; margin-left: 20px;">№</span>
-                            <span style="font-weight: normal;">${certNumber}</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Нижняя часть -->
-                    <div style="
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        margin-top: 20px;
-                        padding-top: 20px;
-                        border-top: 2px solid #f0f0f0;
-                    ">
-                        <p style="
-                            font-size: 14px;
-                            color: #999999;
-                            margin: 0;
-                        ">
-                            LearnPro • Онлайн платформа для IT-профессий • learnpro.ru
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Кнопки действий -->
-                <div style="display: flex; gap: 20px; justify-content: center;">
-                    <button onclick="downloadCertificatePDF('${courseId}')" style="
-                        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-                        color: white;
-                        border: none;
-                        padding: 15px 40px;
-                        border-radius: 12px;
-                        font-size: 16px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s;
-                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0,0,0,0.1)'" 
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        📥 Скачать PDF
-                    </button>
-                    <button onclick="shareCertificate('${courseId}')" style="
-                        background: white;
-                        color: #8b5cf6;
-                        border: 2px solid #8b5cf6;
-                        padding: 15px 40px;
-                        border-radius: 12px;
-                        font-size: 16px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s;
-                    " onmouseover="this.style.background='#8b5cf6'; this.style.color='white'" 
-                       onmouseout="this.style.background='white'; this.style.color='#8b5cf6'">
-                        📤 Поделиться
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Добавляем обработчик для закрытия по клику на фон
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeCertificateModalFromElement(modal);
-        }
-    });
-    
-    document.body.appendChild(modal);
-}
-
-// Функция для закрытия модального окна сертификата
-function closeCertificateModal(button) {
-    const modal = button.closest('div[style*="position: fixed"]');
-    if (modal) {
-        document.body.removeChild(modal);
-        enableBodyScroll();
-    }
-}
-
-// Функция для закрытия модального окна по клику на фон
-function closeCertificateModalFromElement(modal) {
-    if (modal && modal.parentNode) {
-        document.body.removeChild(modal);
-        enableBodyScroll();
+        console.error('❌ Ошибка:', error);
+        showNotification('❌ Ошибка при создании PDF', 'error');
     }
 }
 
