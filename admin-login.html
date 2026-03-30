@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в админ-панель - LearnPro</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .admin-login-card {
+            background: white;
+            border-radius: 32px;
+            padding: 3rem;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        .admin-login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-login-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .admin-login-header h1 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-login-header p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .admin-login-form {
+            margin-top: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--gray-light);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .back-to-site {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        .back-to-site a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <div class="admin-login-header">
+                <div class="admin-login-icon">👨‍💼</div>
+                <h1>Доступ к админ-панели</h1>
+                <p>Введите свои учётные данные для входа</p>
+            </div>
+            
+            <form class="admin-login-form" id="adminLoginForm">
+                <div class="form-group">
+                    <label>📧 Email</label>
+                    <input type="email" id="adminEmail" placeholder="admin@learnpro.ru" required autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label>🔒 Пароль</label>
+                    <input type="password" id="adminPassword" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginBtn">
+                    🔐 Войти в админ-панель
+                </button>
+                
+                <div class="error-message" id="errorMessage"></div>
+            </form>
+            
+            <div class="security-badge">
+                <span>🔒</span>
+                <span>Защищённый доступ</span>
+                <span>🛡️</span>
+            </div>
+            
+            <div class="back-to-site">
+                <a href="index.html">← Вернуться на главную</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="admin-auth.js"></script>
+    <script>
+        // Защита от множественных попыток
+        let loginAttempts = 0;
+        let lastAttemptTime = 0;
+        const MAX_ATTEMPTS = 5;
+        const BLOCK_TIME = 15 * 60 * 1000; // 15 минут
+        
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Проверка блокировки
+            const now = Date.now();
+            if (loginAttempts >= MAX_ATTEMPTS && (now - lastAttemptTime) < BLOCK_TIME) {
+                const remainingMinutes = Math.ceil((BLOCK_TIME - (now - lastAttemptTime)) / 60000);
+                errorDiv.style.display = 'block';
+                errorDiv.innerHTML = `⛔ Слишком много попыток. Попробуйте через ${remainingMinutes} минут.`;
+                return;
+            }
+            
+            // Сброс счётчика после разблокировки
+            if (loginAttempts >= MAX_ATTEMPTS && (now - lastAttemptTime) >= BLOCK_TIME) {
+                loginAttempts = 0;
+            }
+            
+            // Показываем загрузку
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '⏳ Проверка...';
+            errorDiv.style.display = 'none';
+            
+            // Имитация задержки для защиты от брутфорса
+            setTimeout(() => {
+                const success = window.adminLogin(email, password);
+                
+                if (success) {
+                    errorDiv.style.display = 'none';
+                    loginBtn.innerHTML = '✅ Успешно! Перенаправление...';
+                    
+                    // Добавляем анимацию успеха
+                    document.querySelector('.admin-login-card').style.animation = 'fadeInUp 0.3s ease reverse';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1000);
+                } else {
+                    loginAttempts++;
+                    lastAttemptTime = Date.now();
+                    
+                    errorDiv.style.display = 'block';
+                    const remaining = MAX_ATTEMPTS - loginAttempts;
+                    errorDiv.innerHTML = `❌ Неверный email или пароль. Осталось попыток: ${remaining}`;
+                    
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '🔐 Войти в админ-панель';
+                    
+                    // Очищаем поле пароля
+                    document.getElementById('adminPassword').value = '';
+                    document.getElementById('adminPassword').focus();
+                }
+            }, 800);
+        });
+        
+        // Добавляем защиту от автозаполнения браузером
+        setTimeout(() => {
+            document.getElementById('adminEmail').value = '';
+            document.getElementById('adminPassword').value = '';
+        }, 100);
+    </script>
+</body>
+</html>
