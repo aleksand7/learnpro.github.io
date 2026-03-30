@@ -178,18 +178,28 @@
     </style>
 </head>
 <body>
+    <!-- В начале admin.html после открывающего тега <body> -->
+<script src="admin-auth.js"></script>
+<script>
+    // Проверка авторизации при загрузке админки
+    if (!window.checkAdminAuth()) {
+        // Перенаправление на страницу входа
+        window.location.href = 'admin-login.html';
+    }
+</script>
     <!-- Header -->
     <header class="header">
         <nav class="nav container">
             <div class="logo">
                 <h2>LearnPro</h2>
             </div>
-            <ul class="nav-links">
-                <li><a href="index.html">🏠 Главная</a></li>
-                <li><a href="dashboard.html">📊 Кабинет</a></li>
-                <li><a href="courses.html">🎓 Курсы</a></li>
-                <li><a href="#" class="logout-btn" onclick="logout()">🚪 Выйти</a></li>
-            </ul>
+           
+        <ul class="nav-links">
+            <li><a href="index.html">🏠 Главная</a></li>
+             <li><a href="dashboard.html">📊 Кабинет</a></li>
+            <li><a href="courses.html">🎓 Курсы</a></li>
+            <li><a href="#" onclick="adminLogout()">🚪 Выйти из админки</a></li>
+        </ul>
         </nav>
     </header>
 
@@ -286,7 +296,7 @@
     </div>
 
     <script src="admin.js"></script>
-</body>
+</body>я
 <!-- Добавьте этот код перед закрывающим тегом </body> -->
 <!-- Кнопка "Наверх" -->
 <button id="scrollToTop" class="scroll-to-top-btn" title="Наверх">
