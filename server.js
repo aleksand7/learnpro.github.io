@@ -133,3 +133,28 @@ app.listen(PORT, () => {
 📧 Email сервис: ${transporter ? 'Настроен' : 'Режим разработки'}
     `);
 });
+// Добавьте в server.js
+app.post('/api/admin/login', (req, res) => {
+    const { email, password } = req.body;
+    
+    // Используйте переменные окружения!
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@learnpro.ru';
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin2024!';
+    
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        // Генерируем JWT токен
+        const token = jwt.sign(
+            { email, role: 'admin' },
+            process.env.JWT_SECRET || 'your-secret-key',
+            { expiresIn: '8h' }
+        );
+        
+        res.json({
+            success: true,
+            token: token,
+            admin: { email, name: 'Администратор' }
+        });
+    } else {
+        res.status(401).json({ success: false, message: 'Неверные данные' });
+    }
+});
